@@ -1,7 +1,13 @@
-[gd_scene load_steps=3 format=3 uid="uid://blxqkeii1t7ak"]
+[gd_scene load_steps=4 format=3 uid="uid://blxqkeii1t7ak"]
 
 [ext_resource type="Script" uid="uid://b4sadjvmjrg5w" path="res://main.gd" id="1_0xm2m"]
 [ext_resource type="PackedScene" uid="uid://dmnm6gaawpg2q" path="res://player.tscn" id="2_0xm2m"]
+
+[sub_resource type="Environment" id="Environment_1bvp3"]
+background_mode = 1
+background_color = Color(0.083999984, 0, 0.14, 1)
+ambient_light_source = 2
+ambient_light_color = Color(0.3328808, 0.33288068, 0.33288068, 1)
 
 [node name="Main" type="Node3D"]
 script = ExtResource("1_0xm2m")
@@ -13,5 +19,8 @@ transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 0, 0
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 39.35385, 0)
 light_energy = 4.794
 omni_range = 934.677
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_1bvp3")
 
 [node name="Player" parent="." instance=ExtResource("2_0xm2m")]

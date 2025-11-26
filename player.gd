@@ -8,13 +8,20 @@ extends Node3D
 ## Node3D for both hands, which does have a starting rotation of <0, 0, 0>. This
 ## also means we can adjust the pivot of the hands by moving the hand models
 ## inside the container Node3Ds.
+##
+## The hands look different because mirroring one with the scale messes up the
+## surface normals (probably). At the moment, the Hand scenes only contain
+## geometry and transformations, so if we get separate models for the left and
+## right hands, it should be easy to give each their own scenes which are
+## instantiated here, replacing the current $Left/LeftHand and $Right/RightHand,
+## without otherwise changing the logic.
 
 ## Hand rotation speed in radians/second.
 @export var rotate_arcspeed: float = 5
 
 ## The desired rotations as set by the joysticks.
-var right_target: Vector3
 var left_target: Vector3
+var right_target: Vector3
 
 func _ready() -> void:
 	pass
@@ -44,8 +51,9 @@ func _approachv3(current: Vector3, target: Vector3, speed: float) -> Vector3:
 
 ## Gets desired hand positions from joysticks and moves hands towards them.
 func _adjust_hands(delta: float) -> void:
-	for composite in [["right", right_target, $Right],
-					  ["left", left_target, $Left]]:
+	for composite in [["left", left_target, $Left],
+					  ["right", right_target, $Right]]:
+
 		var side = composite[0]
 		var target = composite[1]
 		var node = composite[2]
