@@ -1,42 +1,61 @@
 extends Node3D
+## Primary player nodes and logic.
+##
+## The player node holds the main input-reading code and handles the hands.
+## The left and the right hand use the same model, with the left hand scaled by
+## -1 to make a mirror image. This means the left hand's starting rotation is not
+## <0, 0, 0>. So that the joysticks can use the same logic, there is an outer
+## Node3D for both hands, which does have a starting rotation of <0, 0, 0>. This
+## also means we can adjust the pivot of the hands by moving the hand models
+## inside the container Node3Ds.
 
+## Hand rotation speed in radians/second.
 @export var rotate_arcspeed: float = 5
+
+## The desired rotations as set by the joysticks.
 var right_target: Vector3
 var left_target: Vector3
 
-# Called when the node enters the scene tree for the first time.
 func _ready() -> void:
-	pass # Replace with function body.
+	pass
 
 func _input(_event: InputEvent) -> void:
 	pass
 
-func approach(current: float, target: float, speed: float) -> float:
+## Returns result of advancing current towards target by speed, or target if
+## difference is smaller than speed.
+## Usage:
+## [codeblock]
+## x = approach(x, y, rate)
+## [/codeblock]
+func _approach(current: float, target: float, speed: float) -> float:
 	if current == target:
-		return current
+		return target
 	if absf(target - current) < speed:
 		return target
 	return current + signf(target - current) * speed
 
-func approachv3(current: Vector3, target: Vector3, speed: float) -> Vector3:
+## Generalizes [method approach] to work on Vector3s.
+func _approachv3(current: Vector3, target: Vector3, speed: float) -> Vector3:
 	var result = Vector3()
 	for i in [0, 1, 2]:
-		result[i] = approach(current[i], target[i], speed)
+		result[i] = _approach(current[i], target[i], speed)
 	return result
+
+## Gets desired hand positions from joysticks and moves hands towards them.
+func _adjust_hands(delta: float) -> void:
+	for composite in [["right", right_target, $Right],
+					  ["left", left_target, $Left]]:
+		var side = composite[0]
+		var target = composite[1]
+		var node = composite[2]
+		var hand = Input.get_vector(side + "_hand_in", side + "_hand_out",
+									side + "_hand_up", side + "_hand_down")
+		target.x = -hand.y
+		target.z = hand.x
+	
+		node.rotation = _approachv3(node.rotation, target, delta * rotate_arcspeed)
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
-	var right_hand = Input.get_vector("right_hand_in", "right_hand_out",
-									  "right_hand_up", "right_hand_down")
-	right_target.x = -right_hand.y
-	right_target.z = right_hand.x
-	
-	var left_hand = Input.get_vector("left_hand_in", "left_hand_out",
-									  "left_hand_up", "left_hand_down")
-	left_target.x = -left_hand.y
-	left_target.z = left_hand.x
-	
-#	$Right.rotation = $Right.rotation.lerp(right_target, delta * rotate_arcspeed)
-#	$Left.rotation = $Left.rotation.lerp(left_target, delta * rotate_arcspeed)
-	$Right.rotation = approachv3($Right.rotation, right_target, delta * rotate_arcspeed)
-	$Left.rotation = approachv3($Left.rotation, left_target, delta * rotate_arcspeed)
+	_adjust_hands(delta)
