@@ -1,0 +1,8 @@
+[gd_scene load_steps=2 format=3 uid="uid://vvuyjl1goriu"]
+
+[ext_resource type="PackedScene" uid="uid://c6qo0ruwdlp6u" path="res://assets/hand.blend" id="1_u4p2i"]
+
+[node name="Hand" type="Node3D"]
+
+[node name="hand" parent="." instance=ExtResource("1_u4p2i")]
+transform = Transform3D(-5.662343e-08, -6.556708e-08, -0.75, -6.556708e-08, -0.75, 6.556708e-08, -0.75, 6.5567086e-08, 5.6623428e-08, 0, 0, 0)
