@@ -7,12 +7,13 @@
 script = ExtResource("1_onrkg")
 
 [node name="Right" type="Node3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -40, -40, 55)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -40, -40, 35)
 
 [node name="RightHand" parent="Right" instance=ExtResource("1_4flbx")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 15)
 
 [node name="Left" type="Node3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 40, -40, 55)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 40, -40, 30)
 
 [node name="LeftHand" parent="Left" instance=ExtResource("1_4flbx")]
-transform = Transform3D(-1, 1.509958e-07, 1.509958e-07, 1.509958e-07, 1, 0, 1.509958e-07, -2.2799733e-14, 1, 0, 0, 0)
+transform = Transform3D(-1, 1.509958e-07, 1.509958e-07, 1.509958e-07, 1, 0, 1.509958e-07, -2.2799733e-14, 1, 0, 0, 15)
