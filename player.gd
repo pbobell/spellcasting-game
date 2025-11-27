@@ -16,63 +16,56 @@ extends Node3D
 ## without otherwise changing the logic.
 
 ## Values so arrays can be referenced with [SIDE.LEFT] instead of [0], etc.
-enum SIDE {LEFT, RIGHT};
+enum SIDES {LEFT, RIGHT};
 
-const sidename = {
-	SIDE.LEFT: "left",
-	SIDE.RIGHT: "right"
+const SIDES_NAME = {
+	SIDES.LEFT: "left",
+	SIDES.RIGHT: "right"
 }
 
-func sidenode(side: SIDE) -> Node:
-	if side == SIDE.LEFT:
+func sidenode(side: SIDES) -> Node:
+	if side == SIDES.LEFT:
 		return $Left
-	elif side == SIDE.RIGHT:
+	elif side == SIDES.RIGHT:
 		return $Right
 	return null
 
 # Debugging tools to move hand
-@export_category("Debug Positioning")
-@export var debug_finger_direction: String = ""
-@export var debug_palm_direction: String = ""
-
-func _debug_move_hand(side: SIDE) -> void:
-	if not debug_finger_direction and not debug_palm_direction:
-		var reset = Vector3()
-		if side == SIDE.LEFT:
-			reset = Vector3(-30, -30, 45)
-		elif side == SIDE.RIGHT:
-			reset = Vector3(-30, 30, -45)
-		sidenode(side).rotation = deg_to_rad_v3(reset)
-	elif debug_finger_direction and debug_palm_direction:
-		sidenode(side).rotation = deg_to_rad_v3(ROTATIONS["fingers_" + debug_finger_direction]["palm_" + debug_palm_direction])
-
-func _debug_move_right() -> void:
-	_debug_move_hand(SIDE.RIGHT)
-
-func _debug_move_left() -> void:
-	_debug_move_hand(SIDE.LEFT)
-
-@export_tool_button("Move Left Hand", "Callable") var move_left_action = _debug_move_left
-@export_tool_button("Move Right Hand", "Callable") var move_right_action = _debug_move_right
+#@export_category("Debug Positioning")
+#@export var debug_finger_direction: String = ""
+#@export var debug_palm_direction: String = ""
+#
+#func _debug_move_hand(side: SIDE) -> void:
+	#if not debug_finger_direction and not debug_palm_direction:
+		#var reset = Vector3()
+		#if side == SIDE.LEFT:
+			#reset = Vector3(-30, -30, 45)
+		#elif side == SIDE.RIGHT:
+			#reset = Vector3(-30, 30, -45)
+		#sidenode(side).rotation = deg_to_rad_v3(reset)
+	#elif debug_finger_direction and debug_palm_direction:
+		#sidenode(side).rotation = deg_to_rad_v3(ROTATIONS["fingers_" + debug_finger_direction]["palm_" + debug_palm_direction])
+#
+#func _debug_move_right() -> void:
+	#_debug_move_hand(SIDE.RIGHT)
+#
+#func _debug_move_left() -> void:
+	#_debug_move_hand(SIDE.LEFT)
+#
+#@export_tool_button("Move Left Hand", "Callable") var move_left_action = _debug_move_left
+#@export_tool_button("Move Right Hand", "Callable") var move_right_action = _debug_move_right
 
 @export_category("Properties")
 
 ## Hand rotation speed in radians/second.
 @export var rotate_arcspeed: float = 5
 
-## Convenience function to make left and right Vector3s.
-func zero_pair() -> Array[Vector3]:
-	return [Vector3.ZERO, Vector3.ZERO]
-
 ## Default "resting" positions for hands
-var resting_rotation: Array[Vector3] = zero_pair()
-
-## The desired rotations as set by the joysticks.
-#var target: Array[Vector3] = zero_pair()
+var resting_rotation: Array[Vector3] = [Vector3.ZERO, Vector3.ZERO]
 
 func _ready() -> void:
-	resting_rotation[SIDE.LEFT] = $Left.rotation
-	resting_rotation[SIDE.RIGHT] = $Right.rotation
+	resting_rotation[SIDES.LEFT] = $Left.rotation
+	resting_rotation[SIDES.RIGHT] = $Right.rotation
 
 func _input(_event: InputEvent) -> void:
 	pass
@@ -97,47 +90,12 @@ func _approachv3(current: Vector3, target: Vector3, speed: float) -> Vector3:
 		result[i] = _approach(current[i], target[i], speed)
 	return result
 
-## Simple hand position calculation based on joystick axes
-func _axis_based_target(side: SIDE, joy: Vector2) -> Vector3:
-	var target = resting_rotation[side]
-	target.x -= joy.y
-	target.z += joy.x
-	return target
-
 ## Helper function to call [function deg_to_rad] on all elements of a Vector3.
 func deg_to_rad_v3(vec: Vector3) -> Vector3:
 	var out = Vector3()
 	for i in range(3):
 		out[i] = deg_to_rad(vec[i])
 	return out
-
-## Hand positions
-const ROTATIONS = {
-	"fingers_up": {
-		"palm_in": Vector3(-70, 15, -30),
-		"palm_fwd": Vector3(-60, -15, -65),
-		"palm_back": Vector3(-60, 25, 65),
-	},
-	"fingers_fwd": {
-		"palm_in": Vector3(0, 15, 0),
-		"palm_up": Vector3(0, 0, 80),
-		"palm_down": Vector3(0, 0, -100)
-	},
-	"fingers_in": {
-		"palm_fwd": Vector3(-65, 0, -90),
-		"palm_back": Vector3(-60, 0, 90),
-		"palm_up": Vector3(0, 0, 80),
-		"palm_down": Vector3(0, 0, -100)
-	}
-}
-
-var previous_angle = [null, null]
-var previous_joy: Array[Vector2] = [Vector2(), Vector2()]
-
-enum PATHS {NONE, CW, CCW};
-
-# Path each joystick has taken
-var joy_path: Array[PATHS] = [PATHS.NONE, PATHS.NONE]
 
 ## Scales `val` from the range [from_left, from_right] to [to_left, to_right].
 func lscale (val: float, from_left: float, from_right: float,
@@ -161,8 +119,8 @@ const DIRS_NAMES = {
 	DIRS.DOWN: "DOWN"
 }
 
-var fingers: DIRS = DIRS.NONE
-var palm: DIRS = DIRS.NONE
+var fingers: Array[DIRS] = [DIRS.NONE, DIRS.NONE]
+var palm: Array[DIRS] = [DIRS.NONE, DIRS.NONE]
 
 const ORIENTATIONS = {
 	# When finger direction is neutral, palm is always neutral.
@@ -181,17 +139,16 @@ const ORIENTATIONS = {
 		DIRS.DOWN: Vector3(0, 0, -90)
 	},
 	DIRS.UP: {
-		DIRS.NONE: null,
 		DIRS.IN: Vector3(-90, 0, 0),
 		DIRS.FWD: Vector3(-90, -90, 0),
-		DIRS.BACK: Vector3(-90, 90, 0),
-		DIRS.UP: null,
-		DIRS.DOWN: null
+		DIRS.BACK: Vector3(-90, 90, 0)
 	}
 }
 
+## Three identified portions of a joystick.
 enum THIRDS {IN, UP, DOWN}
 
+## Returns true if x is in the given third of the joystick area.
 func in_third(x: float, third: THIRDS):
 	match third:
 		THIRDS.UP:
@@ -201,101 +158,60 @@ func in_third(x: float, third: THIRDS):
 		_:
 			return x >= 120 or x < -120
 
-func lscaled_rotations(angle, target):
-	
-	# Here's what we need:
-	# if angle == 180: h.r.x = 0, h.r.y = 90, h.r.z floats
-	# if angle == 60: h.r.x = -90, h.r.y floats, h.r.z = 0
-	# if angle == -60: h.r.x = 0, h.r.y = 0, h.r.z floats
-	
-	# So x never floats. If it's being pushed, it's towards 0 or towards -90.
-	# As angle goes from -60 to 60, x goes from 0 to -90.
-	# As angle goes from 60 to 180, x goes from -90 to 0.
-	# Otherwise, x is...0?
-	
-	# As angle goes from -60 to -180, y goes from 0 to 90
-	# As angle decreases from 180, y should give its 90 less weight.
-	# As angle increases from -60, y should give its 0 less weight.
-	
-	# As angle approaches 60, z should approach 0.
-	
-	if angle >= -60 and angle <= 60:
-		target.x = lscale(angle, -60, 60, 0, -90)
-	elif angle > 60 and angle <= 180:
-		target.x = lscale(angle, 60, 180, -90, 0)
-	else:
-		target.x = 0
-
-	var computed_y = 0
-	var computed_z = 0
-
-	if angle <= -60 and angle >= -180:
-		target.y = lscale(angle, -180, -60, 90, 0)
-	elif angle > -60 and angle <= 60:
-		target.y = lscale(angle, -60, 60, 0, computed_y)
-	else:
-		target.y = lscale(angle, 60, 180, computed_y, 90)
-
-	if angle >= -60 and angle <= 60:
-		target.z = lscale(angle, -60, 60, computed_z, 0)
-	elif angle > 60 and angle <= 180:
-		target.z = lscale(angle, 60, 180, 0, computed_z)
-
-	# That takes care of fingers.
-	# How do you do palms?
-
 ## Gets desired hand position from previous as well as angle of joystick
-func _travel_based_target(side: SIDE, joy: Vector2) -> Vector3:
+func _travel_based_target(side: SIDES, joy: Vector2) -> Vector3:
 	var neutral = resting_rotation[side]
 
 	# If joystick isn't pushed very far, consider it to be in neutral position
 	# and no path is being followed.
 	if joy.length() < 0.25:
-		fingers = DIRS.NONE
-		palm = DIRS.NONE
+		fingers[side] = DIRS.NONE
+		palm[side] = DIRS.NONE
 		return neutral
 
 	var target = neutral
 	var angle = rad_to_deg(joy.angle())
 
-	var prev_fingers: DIRS = fingers
+	var prev_fingers: DIRS = fingers[side]
 
 	if in_third(angle, THIRDS.UP):
-		fingers = DIRS.UP
+		fingers[side] = DIRS.UP
 	elif in_third(angle, THIRDS.DOWN):
-		fingers = DIRS.FWD
+		fingers[side] = DIRS.FWD
 	elif in_third(angle, THIRDS.IN):
-		fingers = DIRS.IN
+		fingers[side] = DIRS.IN
 	else:
 		assert(false, "Impossible angle")
 
 	# At the point of changing finger orientation, figure out the new palm orientation.
-	if fingers != prev_fingers:
+	if fingers[side] != prev_fingers:
+		if side == SIDES.RIGHT:
+			print("Fingers moved from ", DIRS_NAMES[prev_fingers], " to ", DIRS_NAMES[fingers[side]])
 		match fingers:
 			DIRS.NONE:
-				palm = DIRS.NONE
+				palm[side] = DIRS.NONE
 			DIRS.IN:
 				match prev_fingers:
 					DIRS.NONE:
-						palm = DIRS.BACK
+						palm[side] = DIRS.BACK
 					DIRS.FWD:
-						match palm:
+						match palm[side]:
 							DIRS.UP:
-								palm = DIRS.UP
+								palm[side] = DIRS.UP
 							DIRS.IN:
-								palm = DIRS.BACK
+								palm[side] = DIRS.BACK
 							DIRS.DOWN:
-								palm = DIRS.DOWN
+								palm[side] = DIRS.DOWN
 							_:
 								assert(false, "Impossible hand")
 					DIRS.UP:
-						match palm:
+						match palm[side]:
 							DIRS.IN:
-								palm = DIRS.DOWN
+								palm[side] = DIRS.DOWN
 							DIRS.FWD:
-								palm = DIRS.FWD
+								palm[side] = DIRS.FWD
 							DIRS.BACK:
-								palm = DIRS.BACK
+								palm[side] = DIRS.BACK
 							_:
 								assert(false, "Impossible hand")
 					_:
@@ -303,27 +219,27 @@ func _travel_based_target(side: SIDE, joy: Vector2) -> Vector3:
 			DIRS.FWD:
 				match prev_fingers:
 					DIRS.NONE:
-						palm = DIRS.IN
+						palm[side] = DIRS.IN
 					DIRS.IN:
-						match palm:
+						match palm[side]:
 							DIRS.UP:
-								palm = DIRS.UP
+								palm[side] = DIRS.UP
 							DIRS.FWD:
-								palm = DIRS.DOWN
+								palm[side] = DIRS.DOWN
 							DIRS.DOWN:
-								palm = DIRS.DOWN
+								palm[side] = DIRS.DOWN
 							DIRS.BACK:
-								palm = DIRS.IN
+								palm[side] = DIRS.IN
 							_:
 								assert(false, "Impossible hand")
 					DIRS.UP:
-						match palm:
+						match palm[side]:
 							DIRS.IN:
-								palm = DIRS.IN
+								palm[side] = DIRS.IN
 							DIRS.FWD:
-								palm = DIRS.DOWN
+								palm[side] = DIRS.DOWN
 							DIRS.BACK:
-								palm = DIRS.UP
+								palm[side] = DIRS.UP
 							_:
 								assert(false, "Impossible hand")
 					_:
@@ -331,48 +247,47 @@ func _travel_based_target(side: SIDE, joy: Vector2) -> Vector3:
 			DIRS.UP:
 				match prev_fingers:
 					DIRS.NONE:
-						palm = DIRS.IN
+						palm[side] = DIRS.IN
 					DIRS.IN:
-							match palm:
+							match palm[side]:
 								DIRS.UP:
-									palm = DIRS.BACK
+									palm[side] = DIRS.BACK
 								DIRS.FWD:
-									palm = DIRS.FWD
+									palm[side] = DIRS.FWD
 								DIRS.DOWN:
-									palm = DIRS.IN
+									palm[side] = DIRS.IN
 								DIRS.BACK:
-									palm = DIRS.BACK
+									palm[side] = DIRS.BACK
 								_:
 									assert(false, "Impossible hand")
 					DIRS.FWD:
-						match palm:
+						match palm[side]:
 							DIRS.IN:
-								palm = DIRS.IN
+								palm[side] = DIRS.IN
 							DIRS.UP:
-								palm = DIRS.BACK
+								palm[side] = DIRS.BACK
 							DIRS.DOWN:
-								palm = DIRS.FWD
+								palm[side] = DIRS.FWD
 							_:
 								assert(false, "Impossible hand")
 					_:
 						assert(false, "Impossible hand")
 			_:
 				assert(false, "Impossible hand")
+		if side == SIDES.RIGHT:
+			print("  palm ", DIRS_NAMES[palm[side]])
 
-	if side == SIDE.RIGHT:
-		print("fingers ", DIRS_NAMES[fingers], ", palm ", DIRS_NAMES[palm])
-
-	target = ORIENTATIONS[fingers][palm]
-	if side == SIDE.LEFT:
+	target = ORIENTATIONS[fingers[side]][palm[side]]
+	if side == SIDES.LEFT:
 		target.y *= -1
 	return deg_to_rad_v3(target)
 	
 ## Gets desired hand positions from joysticks and moves hands towards them.
 func _adjust_hands(delta: float) -> void:
-	for side in [SIDE.LEFT, SIDE.RIGHT]:
+	for side in [SIDES.LEFT, SIDES.RIGHT]:
 		var node = sidenode(side)
-		var joy = Input.get_vector(sidename[side] + "_hand_in", sidename[side] + "_hand_out",
-								   sidename[side] + "_hand_down", sidename[side] + "_hand_up")
+		var joy = Input.get_vector(SIDES_NAME[side] + "_hand_in", SIDES_NAME[side] + "_hand_out",
+								   SIDES_NAME[side] + "_hand_down", SIDES_NAME[side] + "_hand_up")
 #		if joy.length() > 0.5:
 #			print(rad_to_deg(joy.angle()))
 
