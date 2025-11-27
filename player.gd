@@ -72,11 +72,11 @@ func _adjust_hands(delta: float) -> void:
 									sidename[side] + "_hand_up", sidename[side] + "_hand_down")
 		if hand.length() > 0.5:
 			print(rad_to_deg(hand.angle()))
-		var target = zero_pair()
-		target[side].x = resting_rotation[side].x - hand.y
-		target[side].z = resting_rotation[side].z + hand.x
+		var target = resting_rotation[side]
+		target.x -= hand.y
+		target.z += hand.x
 	
-		node.rotation = _approachv3(node.rotation, target[side], delta * rotate_arcspeed)
+		node.rotation = _approachv3(node.rotation, target, delta * rotate_arcspeed)
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
