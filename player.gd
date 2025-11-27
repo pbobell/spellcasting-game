@@ -187,7 +187,7 @@ func _travel_based_target(side: SIDES, joy: Vector2) -> Vector3:
 	if fingers[side] != prev_fingers:
 		if side == SIDES.RIGHT:
 			print("Fingers moved from ", DIRS_NAMES[prev_fingers], " to ", DIRS_NAMES[fingers[side]])
-		match fingers:
+		match fingers[side]:
 			DIRS.NONE:
 				palm[side] = DIRS.NONE
 			DIRS.IN:
