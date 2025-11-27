@@ -30,84 +30,6 @@ func sidenode(side: SIDES) -> Node:
 		return $Right
 	return null
 
-# Debugging tools to move hand
-#@export_category("Debug Positioning")
-#@export var debug_finger_direction: String = ""
-#@export var debug_palm_direction: String = ""
-#
-#func _debug_move_hand(side: SIDE) -> void:
-	#if not debug_finger_direction and not debug_palm_direction:
-		#var reset = Vector3()
-		#if side == SIDE.LEFT:
-			#reset = Vector3(-30, -30, 45)
-		#elif side == SIDE.RIGHT:
-			#reset = Vector3(-30, 30, -45)
-		#sidenode(side).rotation = deg_to_rad_v3(reset)
-	#elif debug_finger_direction and debug_palm_direction:
-		#sidenode(side).rotation = deg_to_rad_v3(ROTATIONS["fingers_" + debug_finger_direction]["palm_" + debug_palm_direction])
-#
-#func _debug_move_right() -> void:
-	#_debug_move_hand(SIDE.RIGHT)
-#
-#func _debug_move_left() -> void:
-	#_debug_move_hand(SIDE.LEFT)
-#
-#@export_tool_button("Move Left Hand", "Callable") var move_left_action = _debug_move_left
-#@export_tool_button("Move Right Hand", "Callable") var move_right_action = _debug_move_right
-
-@export_category("Properties")
-
-## Hand rotation speed in radians/second.
-@export var rotate_arcspeed: float = 5
-
-## Default "resting" positions for hands
-var resting_rotation: Array[Vector3] = [Vector3.ZERO, Vector3.ZERO]
-
-func _ready() -> void:
-	resting_rotation[SIDES.LEFT] = $Left.rotation
-	resting_rotation[SIDES.RIGHT] = $Right.rotation
-
-func _input(_event: InputEvent) -> void:
-	pass
-
-## Returns result of advancing current towards target by speed, or target if
-## difference is smaller than speed.
-## Usage:
-## [codeblock]
-## x = approach(x, y, rate)
-## [/codeblock]
-func _approach(current: float, target: float, speed: float) -> float:
-	if current == target:
-		return target
-	if absf(target - current) < speed:
-		return target
-	return current + signf(target - current) * speed
-
-## Generalizes [method approach] to work on Vector3s.
-func _approachv3(current: Vector3, target: Vector3, speed: float) -> Vector3:
-	var result = Vector3()
-	for i in [0, 1, 2]:
-		result[i] = _approach(current[i], target[i], speed)
-	return result
-
-## Helper function to call [function deg_to_rad] on all elements of a Vector3.
-func deg_to_rad_v3(vec: Vector3) -> Vector3:
-	var out = Vector3()
-	for i in range(3):
-		out[i] = deg_to_rad(vec[i])
-	return out
-
-## Scales `val` from the range [from_left, from_right] to [to_left, to_right].
-func lscale (val: float, from_left: float, from_right: float,
-						 to_left: float, to_right: float) -> float:
-	if from_left == from_right:
-		return to_right
-
-	return ((val - from_left)
-		/ (from_right - from_left)
-		* (to_right - to_left)
-		+ to_left)
-
 ## Directions for fingers and palms
 enum DIRS {NONE, IN, FWD, BACK, UP, DOWN}
 const DIRS_NAMES = {
@@ -144,6 +66,46 @@ const ORIENTATIONS = {
 		DIRS.BACK: Vector3(-90, 90, 0)
 	}
 }
+
+@export_category("Properties")
+
+## Hand rotation speed in radians/second.
+@export var rotate_arcspeed: float = 5
+
+## Default "resting" positions for hands
+var resting_rotation: Array[Vector3] = [Vector3.ZERO, Vector3.ZERO]
+
+# Debugging tools to move hand
+#@export_category("Debug Positioning")
+#@export var debug_finger_direction: String = ""
+#@export var debug_palm_direction: String = ""
+#
+#func _debug_move_hand(side: SIDE) -> void:
+	#if not debug_finger_direction and not debug_palm_direction:
+		#var reset = Vector3()
+		#if side == SIDE.LEFT:
+			#reset = Vector3(-30, -30, 45)
+		#elif side == SIDE.RIGHT:
+			#reset = Vector3(-30, 30, -45)
+		#sidenode(side).rotation = deg_to_rad_v3(reset)
+	#elif debug_finger_direction and debug_palm_direction:
+		#sidenode(side).rotation = deg_to_rad_v3(ROTATIONS["fingers_" + debug_finger_direction]["palm_" + debug_palm_direction])
+#
+#func _debug_move_right() -> void:
+	#_debug_move_hand(SIDE.RIGHT)
+#
+#func _debug_move_left() -> void:
+	#_debug_move_hand(SIDE.LEFT)
+#
+#@export_tool_button("Move Left Hand", "Callable") var move_left_action = _debug_move_left
+#@export_tool_button("Move Right Hand", "Callable") var move_right_action = _debug_move_right
+
+func _ready() -> void:
+	resting_rotation[SIDES.LEFT] = $Left.rotation
+	resting_rotation[SIDES.RIGHT] = $Right.rotation
+
+func _input(_event: InputEvent) -> void:
+	pass
 
 ## Three identified portions of a joystick.
 enum THIRDS {IN, UP, DOWN}
@@ -280,7 +242,7 @@ func _travel_based_target(side: SIDES, joy: Vector2) -> Vector3:
 	target = ORIENTATIONS[fingers[side]][palm[side]]
 	if side == SIDES.LEFT:
 		target.y *= -1
-	return deg_to_rad_v3(target)
+	return Util.deg_to_rad_v3(target)
 	
 ## Gets desired hand positions from joysticks and moves hands towards them.
 func _adjust_hands(delta: float) -> void:
@@ -288,12 +250,9 @@ func _adjust_hands(delta: float) -> void:
 		var node = sidenode(side)
 		var joy = Input.get_vector(SIDES_NAME[side] + "_hand_in", SIDES_NAME[side] + "_hand_out",
 								   SIDES_NAME[side] + "_hand_down", SIDES_NAME[side] + "_hand_up")
-#		if joy.length() > 0.5:
-#			print(rad_to_deg(joy.angle()))
 
-#		var target = _axis_based_target(side, joy)
 		var target = _travel_based_target(side, joy)
-		node.rotation = _approachv3(node.rotation, target, delta * rotate_arcspeed)
+		node.rotation = Util.approachv3(node.rotation, target, delta * rotate_arcspeed)
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
