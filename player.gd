@@ -69,10 +69,23 @@ func _axis_based_target(side: SIDE, joy: Vector2) -> Vector3:
 	target.z += joy.x
 	return target
 
+## Helper function to call [function deg_to_rad] on all elements of a Vector3.
+func deg_to_rad_v3(vec: Vector3) -> Vector3:
+	var out = Vector3()
+	for i in range(3):
+		out[i] = deg_to_rad(vec[i])
+	return out
+
 ## Hand positions
 const ROTATIONS = {
 	"fingers_up": {
-		"palm_in": Vector3(0, 0, 0)
+		"palm_in": Vector3(-60, 50, -70)
+	},
+	"fingers_fwd": {
+		"palm_in": Vector3(0, 15, 0)
+	},
+	"fingers_in": {
+		"palm_back": Vector3(-60, 0, 90)
 	}
 }
 
@@ -80,11 +93,17 @@ const ROTATIONS = {
 func _travel_based_target(side: SIDE, joy: Vector2) -> Vector3:
 	var neutral = resting_rotation[side]
 
+	if joy.length() < 0.5:
+		return neutral
+
 	var angle = rad_to_deg(joy.angle())
-	
-	if angle > 50 and angle < 70:
-		return ROTATIONS["fingers_up"]["palm_in"]
-	
+		
+	if angle > 40 and angle < 80:
+		return deg_to_rad_v3(ROTATIONS["fingers_up"]["palm_in"])
+	elif angle < -40 and angle > -80:
+		return deg_to_rad_v3(ROTATIONS["fingers_fwd"]["palm_in"])
+	elif angle > 160 or angle < -160:
+		return deg_to_rad_v3(ROTATIONS["fingers_in"]["palm_back"])
 	return neutral
 	
 ## Gets desired hand positions from joysticks and moves hands towards them.
@@ -95,12 +114,11 @@ func _adjust_hands(delta: float) -> void:
 		var node = composite[1]
 		var joy = Input.get_vector(sidename[side] + "_hand_in", sidename[side] + "_hand_out",
 									sidename[side] + "_hand_down", sidename[side] + "_hand_up")
-		if joy.length() > 0.5:
-			print(rad_to_deg(joy.angle()))
+#		if joy.length() > 0.5:
+#			print(rad_to_deg(joy.angle()))
 
 #		var target = _axis_based_target(side, joy)
 		var target = _travel_based_target(side, joy)
-	
 		node.rotation = _approachv3(node.rotation, target, delta * rotate_arcspeed)
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
