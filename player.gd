@@ -1,3 +1,4 @@
+@tool
 extends Node3D
 ## Primary player nodes and logic.
 ##
@@ -13,6 +14,21 @@ extends Node3D
 ## right hands, it should be easy to give each their own scenes which are
 ## instantiated here, replacing the current $Left/LeftHand and $Right/RightHand,
 ## without otherwise changing the logic.
+
+# Debugging tools to move hand
+@export_category("Debug Positioning")
+@export var debug_finger_direction: String = ""
+@export var debug_palm_direction: String = ""
+
+func _debug_move_right() -> void:
+	if not debug_finger_direction and not debug_palm_direction:
+		$Right.rotation = deg_to_rad_v3(Vector3(-30, 30, -45))
+	elif debug_finger_direction and debug_palm_direction:
+		$Right.rotation = deg_to_rad_v3(ROTATIONS["fingers_" + debug_finger_direction]["palm_" + debug_palm_direction])
+
+@export_tool_button("Move Right Hand", "Callable") var move_right_action = _debug_move_right
+
+@export_category("Properties")
 
 ## Hand rotation speed in radians/second.
 @export var rotate_arcspeed: float = 5
@@ -79,13 +95,20 @@ func deg_to_rad_v3(vec: Vector3) -> Vector3:
 ## Hand positions
 const ROTATIONS = {
 	"fingers_up": {
-		"palm_in": Vector3(-60, 50, -70)
+		"palm_in": Vector3(-60, 50, -70),
+		"palm_fwd": Vector3(-60, -15, -65),
+		"palm_back": Vector3(-60, 25, 65),
 	},
 	"fingers_fwd": {
-		"palm_in": Vector3(0, 15, 0)
+		"palm_in": Vector3(0, 15, 0),
+		"palm_up": Vector3(),
+		"palm_down": Vector3()
 	},
 	"fingers_in": {
-		"palm_back": Vector3(-60, 0, 90)
+		"palm_fwd": Vector3(),
+		"palm_back": Vector3(-60, 0, 90),
+		"palm_up": Vector3(),
+		"palm_down": Vector3()
 	}
 }
 
@@ -167,6 +190,8 @@ func _adjust_hands(delta: float) -> void:
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
+	if Engine.is_editor_hint():
+		return
 	_adjust_hands(delta)
 	if joy_path[SIDE.LEFT] == PATHS.NONE:
 		$ShowPath.texture = null
