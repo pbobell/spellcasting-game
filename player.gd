@@ -140,9 +140,8 @@ enum PATHS {NONE, CW, CCW};
 var joy_path: Array[PATHS] = [PATHS.NONE, PATHS.NONE]
 
 ## Scales `val` from the range [from_left, from_right] to [to_left, to_right].
-func lscale (val: float,
-	from_left: float, from_right: float,
-	to_left: float, to_right: float) -> float:
+func lscale (val: float, from_left: float, from_right: float,
+						 to_left: float, to_right: float) -> float:
 	if from_left == from_right:
 		return to_right
 
@@ -151,19 +150,50 @@ func lscale (val: float,
 		* (to_right - to_left)
 		+ to_left)
 
+## Directions for fingers and palms
+enum DIRS {NONE, IN, FWD, BACK, UP, DOWN}
 
-## Gets desired hand position from previous as well as angle of joystick
-func _travel_based_target(side: SIDE, joy: Vector2) -> Vector3:
-	var neutral = resting_rotation[side]
+var fingers: DIRS = DIRS.NONE
+var palm: DIRS = DIRS.NONE
 
-	# If joystick isn't pushed very far, consider it to be in neutral position
-	# and no path is being followed.
-	if joy.length() < 0.5:
-		return neutral
+const ORIENTATIONS = {
+	# When finger direction is neutral, palm is always neutral.
+	DIRS.NONE: {
+		DIRS.NONE: Vector3(-30, 30, -45),
+	},
+	DIRS.IN: {
+		DIRS.FWD: Vector3(0, 90, 180),
+		DIRS.BACK: Vector3(0, 90, 0),
+		DIRS.UP: Vector3(0, 90, 90),
+		DIRS.DOWN: Vector3(0, 90, -90)
+	},
+	DIRS.FWD: {
+		DIRS.IN: Vector3(0, 0, 0),
+		DIRS.UP: Vector3(0, 0, 90),
+		DIRS.DOWN: Vector3(0, 0, -90)
+	},
+	DIRS.UP: {
+		DIRS.NONE: null,
+		DIRS.IN: Vector3(-90, 0, 0),
+		DIRS.FWD: Vector3(-90, -90, 0),
+		DIRS.BACK: Vector3(-90, 90, 0),
+		DIRS.UP: null,
+		DIRS.DOWN: null
+	}
+}
 
-	var angle = rad_to_deg(joy.angle())
-	
-	var target = neutral
+enum THIRDS {IN, UP, DOWN}
+
+func in_third(x: float, third: THIRDS):
+	match third:
+		THIRDS.UP:
+			return x >= 0 and x < 120
+		THIRDS.DOWN:
+			return x >= -120 and x < 0
+		_:
+			return x >= 120 or x < -120
+
+func lscaled_rotations(angle, target):
 	
 	# Here's what we need:
 	# if angle == 180: h.r.x = 0, h.r.y = 90, h.r.z floats
@@ -187,20 +217,151 @@ func _travel_based_target(side: SIDE, joy: Vector2) -> Vector3:
 		target.x = lscale(angle, 60, 180, -90, 0)
 	else:
 		target.x = 0
-	
+
+	var computed_y = 0
+	var computed_z = 0
+
+	if angle <= -60 and angle >= -180:
+		target.y = lscale(angle, -180, -60, 90, 0)
+	elif angle > -60 and angle <= 60:
+		target.y = lscale(angle, -60, 60, 0, computed_y)
+	else:
+		target.y = lscale(angle, 60, 180, computed_y, 90)
+
+	if angle >= -60 and angle <= 60:
+		target.z = lscale(angle, -60, 60, computed_z, 0)
+	elif angle > 60 and angle <= 180:
+		target.z = lscale(angle, 60, 180, 0, computed_z)
+
 	# That takes care of fingers.
 	# How do you do palms?
-	
+
+## Gets desired hand position from previous as well as angle of joystick
+func _travel_based_target(side: SIDE, joy: Vector2) -> Vector3:
+	var neutral = resting_rotation[side]
+
+	# If joystick isn't pushed very far, consider it to be in neutral position
+	# and no path is being followed.
+	if joy.length() < 0.25:
+		fingers = DIRS.NONE
+		palm = DIRS.NONE
+		return neutral
+
+	var target = neutral
+	var angle = rad_to_deg(joy.angle())
+
+	var prev_fingers: DIRS = fingers
+
+	if in_third(angle, THIRDS.UP):
+		fingers = DIRS.UP
+	elif in_third(angle, THIRDS.DOWN):
+		fingers = DIRS.FWD
+	elif in_third(angle, THIRDS.IN):
+		fingers = DIRS.IN
+	else:
+		assert(false, "Impossible angle")
+
+	# At the point of changing finger orientation, figure out the new palm orientation.
+	if fingers != prev_fingers:
+		match fingers:
+			DIRS.NONE:
+				palm = DIRS.NONE
+			DIRS.IN:
+				match prev_fingers:
+					DIRS.NONE:
+						palm = DIRS.BACK
+					DIRS.FWD:
+						match palm:
+							DIRS.UP:
+								palm = DIRS.UP
+							DIRS.IN:
+								palm = DIRS.BACK
+							DIRS.DOWN:
+								palm = DIRS.DOWN
+							_:
+								assert(false, "Impossible hand")
+					DIRS.UP:
+						match palm:
+							DIRS.IN:
+								palm = DIRS.DOWN
+							DIRS.FWD:
+								palm = DIRS.FWD
+							DIRS.BACK:
+								palm = DIRS.BACK
+							_:
+								assert(false, "Impossible hand")
+					_:
+						assert(false, "Impossible hand")
+			DIRS.FWD:
+				match prev_fingers:
+					DIRS.NONE:
+						palm = DIRS.IN
+					DIRS.IN:
+						match palm:
+							DIRS.UP:
+								palm = DIRS.UP
+							DIRS.FWD:
+								palm = DIRS.DOWN
+							DIRS.DOWN:
+								palm = DIRS.DOWN
+							DIRS.BACK:
+								palm = DIRS.IN
+							_:
+								assert(false, "Impossible hand")
+					DIRS.UP:
+						match palm:
+							DIRS.IN:
+								palm = DIRS.IN
+							DIRS.FWD:
+								palm = DIRS.DOWN
+							DIRS.BACK:
+								palm = DIRS.UP
+							_:
+								assert(false, "Impossible hand")
+					_:
+						assert(false, "Impossible hand")
+			DIRS.UP:
+				match prev_fingers:
+					DIRS.NONE:
+						palm = DIRS.IN
+					DIRS.IN:
+							match palm:
+								DIRS.UP:
+									palm = DIRS.BACK
+								DIRS.FWD:
+									palm = DIRS.FWD
+								DIRS.DOWN:
+									palm = DIRS.IN
+								DIRS.BACK:
+									palm = DIRS.BACK
+								_:
+									assert(false, "Impossible hand")
+					DIRS.FWD:
+						match palm:
+							DIRS.IN:
+								palm = DIRS.IN
+							DIRS.UP:
+								palm = DIRS.BACK
+							DIRS.DOWN:
+								palm = DIRS.FWD
+							_:
+								assert(false, "Impossible hand")
+					_:
+						assert(false, "Impossible hand")
+			_:
+				assert(false, "Impossible hand")
+
+	target = ORIENTATIONS[fingers][palm]
+	if side == SIDE.LEFT:
+		target.y *= -1
 	return deg_to_rad_v3(target)
 	
 ## Gets desired hand positions from joysticks and moves hands towards them.
 func _adjust_hands(delta: float) -> void:
-	for composite in [[SIDE.LEFT, $Left],
-					  [SIDE.RIGHT, $Right]]:
-		var side = composite[0]
-		var node = composite[1]
+	for side in [SIDE.LEFT, SIDE.RIGHT]:
+		var node = sidenode(side)
 		var joy = Input.get_vector(sidename[side] + "_hand_in", sidename[side] + "_hand_out",
-									sidename[side] + "_hand_down", sidename[side] + "_hand_up")
+								   sidename[side] + "_hand_down", sidename[side] + "_hand_up")
 #		if joy.length() > 0.5:
 #			print(rad_to_deg(joy.angle()))
 

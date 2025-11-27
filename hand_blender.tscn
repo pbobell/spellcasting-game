@@ -1,0 +1,11 @@
+[gd_scene load_steps=3 format=3 uid="uid://ck1lnemtcx34x"]
+
+[ext_resource type="PackedScene" uid="uid://c6qo0ruwdlp6u" path="res://assets/hand.blend" id="1_xdcvt"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_xdcvt"]
+albedo_color = Color(1, 0, 0, 1)
+
+[node name="hand" instance=ExtResource("1_xdcvt")]
+
+[node name="12683_hand_v1_FINAL" parent="." index="1"]
+surface_material_override/0 = SubResource("StandardMaterial3D_xdcvt")

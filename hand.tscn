@@ -1,8 +1,8 @@
 [gd_scene load_steps=2 format=3 uid="uid://vvuyjl1goriu"]
 
-[ext_resource type="PackedScene" uid="uid://c6qo0ruwdlp6u" path="res://assets/hand.blend" id="1_u4p2i"]
+[ext_resource type="PackedScene" uid="uid://ck1lnemtcx34x" path="res://hand_blender.tscn" id="2_bfasp"]
 
 [node name="Hand" type="Node3D"]
 
-[node name="hand" parent="." instance=ExtResource("1_u4p2i")]
-transform = Transform3D(-2.1855694e-08, 0, -0.5, 0, 0.5, 0, 0.5, 0, -2.1855694e-08, 2.0412683, 0, 0)
+[node name="hand" parent="." instance=ExtResource("2_bfasp")]
+transform = Transform3D(-2.1855694e-08, 0, -0.5, 0, 0.5, 0, 0.5, 0, -2.1855694e-08, 2.041, 0, 0)
