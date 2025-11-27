@@ -139,6 +139,19 @@ enum PATHS {NONE, CW, CCW};
 # Path each joystick has taken
 var joy_path: Array[PATHS] = [PATHS.NONE, PATHS.NONE]
 
+## Scales `val` from the range [from_left, from_right] to [to_left, to_right].
+func lscale (val: float,
+	from_left: float, from_right: float,
+	to_left: float, to_right: float) -> float:
+	if from_left == from_right:
+		return to_right
+
+	return ((val - from_left)
+		/ (from_right - from_left)
+		* (to_right - to_left)
+		+ to_left)
+
+
 ## Gets desired hand position from previous as well as angle of joystick
 func _travel_based_target(side: SIDE, joy: Vector2) -> Vector3:
 	var neutral = resting_rotation[side]
@@ -146,51 +159,39 @@ func _travel_based_target(side: SIDE, joy: Vector2) -> Vector3:
 	# If joystick isn't pushed very far, consider it to be in neutral position
 	# and no path is being followed.
 	if joy.length() < 0.5:
-		previous_angle[side] = null
-		previous_joy[side] = joy
-		joy_path[side] = PATHS.NONE
 		return neutral
 
 	var angle = rad_to_deg(joy.angle())
 	
-	if previous_angle[side] != null:
-		var delta = previous_joy[side].angle_to(joy)
-		if side == SIDE.LEFT:
-			delta *= -1
-		if delta < 0:
-			if joy_path[side] == PATHS.CW:
-				joy_path[side] = PATHS.NONE
-			else:
-				joy_path[side] = PATHS.CCW
-		elif delta > 0:
-			if joy_path[side] == PATHS.CCW:
-				joy_path[side] = PATHS.NONE
-			else:
-				joy_path[side] = PATHS.CW
+	var target = neutral
 	
-	var result = neutral
+	# Here's what we need:
+	# if angle == 180: h.r.x = 0, h.r.y = 90, h.r.z floats
+	# if angle == 60: h.r.x = -90, h.r.y floats, h.r.z = 0
+	# if angle == -60: h.r.x = 0, h.r.y = 0, h.r.z floats
 	
-	var fingers = null
-	var palm = null
+	# So x never floats. If it's being pushed, it's towards 0 or towards -90.
+	# As angle goes from -60 to 60, x goes from 0 to -90.
+	# As angle goes from 60 to 180, x goes from -90 to 0.
+	# Otherwise, x is...0?
 	
-	if angle > 40 and angle < 80:
-		fingers = "fingers_up"
-		palm = "palm_in"
-	elif angle < -40 and angle > -80:
-		fingers = "fingers_fwd"
-		palm = "palm_in"
-	elif angle > 160 or angle < -160:
-		fingers = "fingers_in"
-		palm = "palm_back"
+	# As angle goes from -60 to -180, y goes from 0 to 90
+	# As angle decreases from 180, y should give its 90 less weight.
+	# As angle increases from -60, y should give its 0 less weight.
 	
-	if fingers != null and palm != null:
-		result = deg_to_rad_v3(ROTATIONS[fingers][palm])
+	# As angle approaches 60, z should approach 0.
 	
-	# Save for next frame
-	previous_angle[side] = angle
-	previous_joy[side] = joy
+	if angle >= -60 and angle <= 60:
+		target.x = lscale(angle, -60, 60, 0, -90)
+	elif angle > 60 and angle <= 180:
+		target.x = lscale(angle, 60, 180, -90, 0)
+	else:
+		target.x = 0
 	
-	return result
+	# That takes care of fingers.
+	# How do you do palms?
+	
+	return deg_to_rad_v3(target)
 	
 ## Gets desired hand positions from joysticks and moves hands towards them.
 func _adjust_hands(delta: float) -> void:
@@ -212,9 +213,3 @@ func _process(delta: float) -> void:
 	if Engine.is_editor_hint():
 		return
 	_adjust_hands(delta)
-	if joy_path[SIDE.LEFT] == PATHS.NONE:
-		$ShowPath.texture = null
-	elif joy_path[SIDE.LEFT] == PATHS.CW:
-		$ShowPath.texture = preload("res://assets/cw.png")
-	elif joy_path[SIDE.LEFT] == PATHS.CCW:
-		$ShowPath.texture = preload("res://assets/ccw.png")
