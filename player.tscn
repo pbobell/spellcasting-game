@@ -17,3 +17,6 @@ transform = Transform3D(0.7891491, 0.4355957, 0.4330127, -0.6123724, 0.6123724, 
 
 [node name="RightHand" parent="Right" instance=ExtResource("1_4flbx")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 35)
+
+[node name="ShowPath" type="Sprite3D" parent="."]
+transform = Transform3D(10, 0, 0, 0, 10, 0, 0, 0, 10, 0, 5.362402, 19.323296)

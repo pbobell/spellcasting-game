@@ -89,22 +89,66 @@ const ROTATIONS = {
 	}
 }
 
+var previous_angle = [null, null]
+var previous_joy: Array[Vector2] = [Vector2(), Vector2()]
+
+enum PATHS {NONE, CW, CCW};
+
+# Path each joystick has taken
+var joy_path: Array[PATHS] = [PATHS.NONE, PATHS.NONE]
+
 ## Gets desired hand position from previous as well as angle of joystick
 func _travel_based_target(side: SIDE, joy: Vector2) -> Vector3:
 	var neutral = resting_rotation[side]
 
+	# If joystick isn't pushed very far, consider it to be in neutral position
+	# and no path is being followed.
 	if joy.length() < 0.5:
+		previous_angle[side] = null
+		previous_joy[side] = joy
+		joy_path[side] = PATHS.NONE
 		return neutral
 
 	var angle = rad_to_deg(joy.angle())
-		
+	
+	if previous_angle[side] != null:
+		var delta = previous_joy[side].angle_to(joy)
+		if side == SIDE.LEFT:
+			delta *= -1
+		if delta < 0:
+			if joy_path[side] == PATHS.CW:
+				joy_path[side] = PATHS.NONE
+			else:
+				joy_path[side] = PATHS.CCW
+		elif delta > 0:
+			if joy_path[side] == PATHS.CCW:
+				joy_path[side] = PATHS.NONE
+			else:
+				joy_path[side] = PATHS.CW
+	
+	var result = neutral
+	
+	var fingers = null
+	var palm = null
+	
 	if angle > 40 and angle < 80:
-		return deg_to_rad_v3(ROTATIONS["fingers_up"]["palm_in"])
+		fingers = "fingers_up"
+		palm = "palm_in"
 	elif angle < -40 and angle > -80:
-		return deg_to_rad_v3(ROTATIONS["fingers_fwd"]["palm_in"])
+		fingers = "fingers_fwd"
+		palm = "palm_in"
 	elif angle > 160 or angle < -160:
-		return deg_to_rad_v3(ROTATIONS["fingers_in"]["palm_back"])
-	return neutral
+		fingers = "fingers_in"
+		palm = "palm_back"
+	
+	if fingers != null and palm != null:
+		result = deg_to_rad_v3(ROTATIONS[fingers][palm])
+	
+	# Save for next frame
+	previous_angle[side] = angle
+	previous_joy[side] = joy
+	
+	return result
 	
 ## Gets desired hand positions from joysticks and moves hands towards them.
 func _adjust_hands(delta: float) -> void:
@@ -124,3 +168,9 @@ func _adjust_hands(delta: float) -> void:
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
 	_adjust_hands(delta)
+	if joy_path[SIDE.LEFT] == PATHS.NONE:
+		$ShowPath.texture = null
+	elif joy_path[SIDE.LEFT] == PATHS.CW:
+		$ShowPath.texture = preload("res://assets/cw.png")
+	elif joy_path[SIDE.LEFT] == PATHS.CCW:
+		$ShowPath.texture = preload("res://assets/ccw.png")
