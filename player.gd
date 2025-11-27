@@ -101,14 +101,14 @@ const ROTATIONS = {
 	},
 	"fingers_fwd": {
 		"palm_in": Vector3(0, 15, 0),
-		"palm_up": Vector3(),
-		"palm_down": Vector3()
+		"palm_up": Vector3(0, 0, 80),
+		"palm_down": Vector3(0, 0, -100)
 	},
 	"fingers_in": {
-		"palm_fwd": Vector3(),
+		"palm_fwd": Vector3(-65, 0, -90),
 		"palm_back": Vector3(-60, 0, 90),
-		"palm_up": Vector3(),
-		"palm_down": Vector3()
+		"palm_up": Vector3(0, 0, 80),
+		"palm_down": Vector3(0, 0, -100)
 	}
 }
 
