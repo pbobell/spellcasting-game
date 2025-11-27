@@ -76,29 +76,22 @@ const ORIENTATIONS = {
 var resting_rotation: Array[Vector3] = [Vector3.ZERO, Vector3.ZERO]
 
 # Debugging tools to move hand
-#@export_category("Debug Positioning")
-#@export var debug_finger_direction: String = ""
-#@export var debug_palm_direction: String = ""
-#
-#func _debug_move_hand(side: SIDE) -> void:
-	#if not debug_finger_direction and not debug_palm_direction:
-		#var reset = Vector3()
-		#if side == SIDE.LEFT:
-			#reset = Vector3(-30, -30, 45)
-		#elif side == SIDE.RIGHT:
-			#reset = Vector3(-30, 30, -45)
-		#sidenode(side).rotation = deg_to_rad_v3(reset)
-	#elif debug_finger_direction and debug_palm_direction:
-		#sidenode(side).rotation = deg_to_rad_v3(ROTATIONS["fingers_" + debug_finger_direction]["palm_" + debug_palm_direction])
-#
-#func _debug_move_right() -> void:
-	#_debug_move_hand(SIDE.RIGHT)
-#
-#func _debug_move_left() -> void:
-	#_debug_move_hand(SIDE.LEFT)
-#
-#@export_tool_button("Move Left Hand", "Callable") var move_left_action = _debug_move_left
-#@export_tool_button("Move Right Hand", "Callable") var move_right_action = _debug_move_right
+@export_category("Debug Positioning")
+
+func _debug_move_left() -> void:
+	$RIGHT.rotation = Util.deg_to_rad_v3(ORIENTATIONS[debug_left_fingers][debug_left_palm])
+
+@export var debug_left_fingers: DIRS = DIRS.NONE
+@export var debug_left_palm: DIRS = DIRS.NONE
+@export_tool_button("Move Left Hand", "Callable") var move_left_action = _debug_move_left
+
+func _debug_move_right() -> void:
+	$RIGHT.rotation = Util.deg_to_rad_v3(ORIENTATIONS[debug_right_fingers][debug_right_palm])
+
+@export var debug_right_fingers: DIRS = DIRS.NONE
+@export var debug_right_palm: DIRS = DIRS.NONE
+@export_tool_button("Move Right Hand", "Callable") var move_right_action = _debug_move_right
+
 
 func _ready() -> void:
 	resting_rotation[SIDES.LEFT] = $Left.rotation

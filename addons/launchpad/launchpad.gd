@@ -4,7 +4,7 @@ extends EditorPlugin
 var is_editor_focused = false
 
 # You can change this to any button
-var button: JoyButton = JOY_BUTTON_GUIDE
+var button: JoyButton = JOY_BUTTON_START
 
 func _enter_tree():
 	is_editor_focused = true
