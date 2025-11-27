@@ -95,7 +95,7 @@ func deg_to_rad_v3(vec: Vector3) -> Vector3:
 ## Hand positions
 const ROTATIONS = {
 	"fingers_up": {
-		"palm_in": Vector3(-60, 50, -70),
+		"palm_in": Vector3(-70, 15, -30),
 		"palm_fwd": Vector3(-60, -15, -65),
 		"palm_back": Vector3(-60, 25, 65),
 	},
