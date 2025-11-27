@@ -3,10 +3,8 @@ extends Node3D
 ##
 ## The player node holds the main input-reading code and handles the hands.
 ## The left and the right hand use the same model, with the left hand scaled by
-## -1 to make a mirror image. This means the left hand's starting rotation is not
-## <0, 0, 0>. So that the joysticks can use the same logic, there is an outer
-## Node3D for both hands, which does have a starting rotation of <0, 0, 0>. This
-## also means we can adjust the pivot of the hands by moving the hand models
+## -1 to make a mirror image. There is an outer Node3D for both hands, which
+## means we can adjust the pivot of the hands by moving the hand models
 ## inside the container Node3Ds.
 ##
 ## The hands look different because mirroring one with the scale messes up the
@@ -19,12 +17,27 @@ extends Node3D
 ## Hand rotation speed in radians/second.
 @export var rotate_arcspeed: float = 5
 
+## Values so arrays can be referenced with [SIDE.LEFT] instead of [0], etc.
+enum SIDE {LEFT, RIGHT};
+
+const sidename = {
+	SIDE.LEFT: "left",
+	SIDE.RIGHT: "right"
+}
+
+## Convenience function to make left and right Vector3s.
+func zero_pair() -> Array[Vector3]:
+	return [Vector3.ZERO, Vector3.ZERO]
+
+## Default "resting" positions for hands
+var resting_rotation: Array[Vector3] = zero_pair()
+
 ## The desired rotations as set by the joysticks.
-var left_target: Vector3
-var right_target: Vector3
+#var target: Array[Vector3] = zero_pair()
 
 func _ready() -> void:
-	pass
+	resting_rotation[SIDE.LEFT] = $Left.rotation
+	resting_rotation[SIDE.RIGHT] = $Right.rotation
 
 func _input(_event: InputEvent) -> void:
 	pass
@@ -51,18 +64,19 @@ func _approachv3(current: Vector3, target: Vector3, speed: float) -> Vector3:
 
 ## Gets desired hand positions from joysticks and moves hands towards them.
 func _adjust_hands(delta: float) -> void:
-	for composite in [["left", left_target, $Left],
-					  ["right", right_target, $Right]]:
-
+	for composite in [[SIDE.LEFT, $Left],
+					  [SIDE.RIGHT, $Right]]:
 		var side = composite[0]
-		var target = composite[1]
-		var node = composite[2]
-		var hand = Input.get_vector(side + "_hand_in", side + "_hand_out",
-									side + "_hand_up", side + "_hand_down")
-		target.x = -hand.y
-		target.z = hand.x
+		var node = composite[1]
+		var hand = Input.get_vector(sidename[side] + "_hand_in", sidename[side] + "_hand_out",
+									sidename[side] + "_hand_up", sidename[side] + "_hand_down")
+		if hand.length() > 0.5:
+			print(rad_to_deg(hand.angle()))
+		var target = zero_pair()
+		target[side].x = resting_rotation[side].x - hand.y
+		target[side].z = resting_rotation[side].z + hand.x
 	
-		node.rotation = _approachv3(node.rotation, target, delta * rotate_arcspeed)
+		node.rotation = _approachv3(node.rotation, target[side], delta * rotate_arcspeed)
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
