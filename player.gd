@@ -152,6 +152,14 @@ func lscale (val: float, from_left: float, from_right: float,
 
 ## Directions for fingers and palms
 enum DIRS {NONE, IN, FWD, BACK, UP, DOWN}
+const DIRS_NAMES = {
+	DIRS.NONE: "neutral",
+	DIRS.IN: "IN",
+	DIRS.FWD: "FORWARD",
+	DIRS.BACK: "BACK",
+	DIRS.UP: "UP",
+	DIRS.DOWN: "DOWN"
+}
 
 var fingers: DIRS = DIRS.NONE
 var palm: DIRS = DIRS.NONE
@@ -350,6 +358,9 @@ func _travel_based_target(side: SIDE, joy: Vector2) -> Vector3:
 						assert(false, "Impossible hand")
 			_:
 				assert(false, "Impossible hand")
+
+	if side == SIDE.RIGHT:
+		print("fingers ", DIRS_NAMES[fingers], ", palm ", DIRS_NAMES[palm])
 
 	target = ORIENTATIONS[fingers][palm]
 	if side == SIDE.LEFT:
