@@ -67,6 +67,9 @@ const ORIENTATIONS = {
 	}
 }
 
+func to_left(v: Vector3):
+	return Vector3(v.x, -v.y, -v.z)
+
 @export_category("Properties")
 
 ## Hand rotation speed in radians/second.
@@ -79,14 +82,14 @@ var resting_rotation: Array[Vector3] = [Vector3.ZERO, Vector3.ZERO]
 @export_category("Debug Positioning")
 
 func _debug_move_left() -> void:
-	$RIGHT.rotation = Util.deg_to_rad_v3(ORIENTATIONS[debug_left_fingers][debug_left_palm])
+	$Left.rotation = Util.deg_to_rad_v3(to_left(ORIENTATIONS[debug_left_fingers][debug_left_palm]))
 
 @export var debug_left_fingers: DIRS = DIRS.NONE
 @export var debug_left_palm: DIRS = DIRS.NONE
 @export_tool_button("Move Left Hand", "Callable") var move_left_action = _debug_move_left
 
 func _debug_move_right() -> void:
-	$RIGHT.rotation = Util.deg_to_rad_v3(ORIENTATIONS[debug_right_fingers][debug_right_palm])
+	$Right.rotation = Util.deg_to_rad_v3(ORIENTATIONS[debug_right_fingers][debug_right_palm])
 
 @export var debug_right_fingers: DIRS = DIRS.NONE
 @export var debug_right_palm: DIRS = DIRS.NONE
@@ -234,7 +237,7 @@ func _travel_based_target(side: SIDES, joy: Vector2) -> Vector3:
 
 	target = ORIENTATIONS[fingers[side]][palm[side]]
 	if side == SIDES.LEFT:
-		target.y *= -1
+		target = to_left(target)
 	return Util.deg_to_rad_v3(target)
 	
 ## Gets desired hand positions from joysticks and moves hands towards them.

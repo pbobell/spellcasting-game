@@ -1,3 +1,4 @@
+@tool
 extends Node
 ## Helper functions made globally available.
 ##
