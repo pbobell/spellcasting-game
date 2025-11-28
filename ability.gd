@@ -1,6 +1,11 @@
 class_name Ability
 extends Resource
 ## Ability Resource holding data such as casting configuration and mana cost.
+##
+## The raw data comes from a CSV file, but the generator is a little hard to
+## work with, so this resource acts as a translator. Its static from_data()
+## method takes the CSV-formatted resource and turns it into something easy
+## for the rest of the code to use.
 
 @export var name: String
 ## Time in seconds to hold gesture in order to cast
