@@ -10,4 +10,3 @@ palm_direction = "Down"
 time_to_cast__ms_ = 400
 mana = 4
 source_power = 40
-casting_distance__feet_ = "Variable"
