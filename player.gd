@@ -260,7 +260,7 @@ func _process(delta: float) -> void:
 	for side in [g.SIDES.LEFT, g.SIDES.RIGHT]:
 		if not $AbilityHandler.current[side]:
 			continue
-		sidelabel(side).modulate = Color.WHITE.lerp(Color.GREEN, $AbilityHandler.progress(side))
+		sidelabel(side).modulate = Color.GRAY.lerp(Color.GREEN, $AbilityHandler.progress(side))
 
 
 func _on_ability_handler_ability_ready(_side: int, _ability: Ability) -> void:
