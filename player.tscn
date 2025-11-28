@@ -9,27 +9,27 @@ script = ExtResource("1_onrkg")
 metadata/_edit_group_ = true
 
 [node name="Left" type="Node3D" parent="."]
-transform = Transform3D(0.789149, -0.4355956, -0.43301275, 0.6123723, 0.6123723, 0.50000006, 0.047367178, -0.65973943, 0.7500001, 50, -40, 10)
+transform = Transform3D(0.789149, -0.4355956, -0.43301275, 0.6123723, 0.6123723, 0.50000006, 0.047367178, -0.65973943, 0.7500001, 5, -4, 1)
 
 [node name="Hand" parent="Left" instance=ExtResource("1_4flbx")]
-transform = Transform3D(-1, 1.509958e-07, 1.509958e-07, 1.509958e-07, 1, 0, 1.509958e-07, -2.2799733e-14, 1, 0, 0, 35)
+transform = Transform3D(-0.1, 1.509958e-08, 1.509958e-08, 1.509958e-08, 0.1, 0, 1.509958e-08, -2.2799734e-15, 0.1, 0, 0, 3.5)
 
 [node name="Right" type="Node3D" parent="."]
-transform = Transform3D(0.78914857, 0.43559554, 0.4330126, -0.612372, 0.61237216, 0.4999999, -0.04736715, -0.6597394, 0.7499999, -50, -40, 10)
+transform = Transform3D(0.78914857, 0.43559554, 0.4330126, -0.612372, 0.61237216, 0.4999999, -0.04736715, -0.6597394, 0.7499999, -5, -4, 1)
 
 [node name="Hand" parent="Right" instance=ExtResource("1_4flbx")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 35)
+transform = Transform3D(0.1, 0, 0, 0, 0.1, 0, 0, 0, 0.1, 0, 0, 3.5)
 
 [node name="AbilityHandler" parent="." instance=ExtResource("3_i3pqv")]
 
 [node name="LeftAbilityLabel" type="Label3D" parent="."]
-transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 19.80225, 5.910343, 35.12413)
-pixel_size = 0.25
+transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 1.98, 0.591, 3.512)
+pixel_size = 0.025
 outline_size = 6
 
 [node name="RightAbilityLabel" type="Label3D" parent="."]
-transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, -19.802, 5.91, 35.124)
-pixel_size = 0.25
+transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, -1.98, 0.591, 3.512)
+pixel_size = 0.025
 outline_size = 6
 
 [connection signal="ability_ready" from="AbilityHandler" to="." method="_on_ability_handler_ability_ready"]
