@@ -25,9 +25,11 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 35)
 [node name="LeftAbilityLabel" type="Label3D" parent="."]
 transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 19.80225, 5.910343, 35.12413)
 pixel_size = 0.25
+outline_size = 6
 
 [node name="RightAbilityLabel" type="Label3D" parent="."]
 transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, -19.802, 5.91, 35.124)
 pixel_size = 0.25
+outline_size = 6
 
 [connection signal="ability_ready" from="AbilityHandler" to="." method="_on_ability_handler_ability_ready"]

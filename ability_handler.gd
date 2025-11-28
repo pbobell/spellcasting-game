@@ -74,5 +74,4 @@ func progress(side: g.SIDES) -> float:
 	return 1 - _side_prep_node(side).time_left / current[side].casting_time
 
 func cast(side: g.SIDES) -> void:
-	print("Casting from ", g.SIDES_NAME[side], ": ", current[side].name)
 	_make_ability_current(side, current[side])
