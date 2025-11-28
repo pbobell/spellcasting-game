@@ -4,3 +4,12 @@
 
 [node name="AbilityHandler" type="Node"]
 script = ExtResource("1_x3enb")
+
+[node name="LeftPrepTimer" type="Timer" parent="."]
+one_shot = true
+
+[node name="RightPrepTimer" type="Timer" parent="."]
+one_shot = true
+
+[connection signal="timeout" from="LeftPrepTimer" to="." method="_on_left_prep_timer_timeout"]
+[connection signal="timeout" from="RightPrepTimer" to="." method="_on_right_prep_timer_timeout"]

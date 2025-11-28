@@ -214,8 +214,11 @@ func _travel_based_target(side: g.SIDES, joy: Vector2) -> Vector3:
 		target = to_left(target)
 	return g.deg_to_rad_v3(target)
 
+## Called when a hand's gesture changes, so casting timer can start and other
+## effects can be loaded.
 func _on_gesture_changed(side: g.SIDES) -> void:
-	print(side, ": ", $AbilityHandler.gestures[fingers[side]][palm[side]].name)
+	$AbilityHandler.select(side, fingers[side], palm[side])
+	print(side, ": ", $AbilityHandler.current[side].name)
 
 func sidenode(side: g.SIDES) -> Node:
 	if side == g.SIDES.LEFT:
@@ -239,3 +242,7 @@ func _process(delta: float) -> void:
 	if Engine.is_editor_hint():
 		return
 	_adjust_hands(delta)
+
+
+func _on_ability_handler_ability_ready(_side: int, _ability: Ability) -> void:
+	pass
