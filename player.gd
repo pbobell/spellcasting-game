@@ -250,5 +250,6 @@ func _on_ability_handler_ability_ready(_side: int, _ability: Ability) -> void:
 	pass
 
 func cast(side: g.SIDES) -> void:
+	var hand = sidenode(side).get_node("Hand/hand/12683_hand_v1_FINAL")
 	if $AbilityHandler.current_ready[side]:
 		$AbilityHandler.cast(side)
