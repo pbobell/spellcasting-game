@@ -19,3 +19,17 @@ func _init(p_name: String = "(unnamed)",
 	mana_cost = p_mana_cost
 	source_power = p_source_power
 	casting_distance = p_casting_distance
+
+static func _parse_distance(dist: String) -> float:
+	if dist == "Variable":
+		return 0
+	return float(dist)
+
+static func from_data(data: AbilityData) -> Ability:
+	var ability = Ability.new(data.ability,
+							  data.time_to_cast__ms_ / 1000.0,
+							  data.mana,
+							  data.source_power,
+							  _parse_distance(data.casting_distance__feet_))
+	return ability
+	

@@ -143,8 +143,6 @@ func _travel_based_target(side: SIDES, joy: Vector2) -> Vector3:
 
 	# At the point of changing finger orientation, figure out the new palm orientation.
 	if fingers[side] != prev_fingers:
-		if side == SIDES.RIGHT:
-			print("Fingers moved from ", DIRS_NAMES[prev_fingers], " to ", DIRS_NAMES[fingers[side]])
 		match fingers[side]:
 			DIRS.NONE:
 				palm[side] = DIRS.NONE
@@ -232,8 +230,6 @@ func _travel_based_target(side: SIDES, joy: Vector2) -> Vector3:
 						assert(false, "Impossible hand")
 			_:
 				assert(false, "Impossible hand")
-		if side == SIDES.RIGHT:
-			print("  palm ", DIRS_NAMES[palm[side]])
 
 	target = ORIENTATIONS[fingers[side]][palm[side]]
 	if side == SIDES.LEFT:
