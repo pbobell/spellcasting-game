@@ -3,6 +3,8 @@ extends Node
 
 var abilities: Array[Ability]
 
+var gestures: Dictionary = {}
+
 const RES_DIR = "res://abilities"
 
 func _ready() -> void:
@@ -16,3 +18,8 @@ func _load_abilities() -> void:
 		var data = ResourceLoader.load(f)
 		var ability = Ability.from_data(data)
 		abilities.push_back(ability)
+		if not gestures.has(ability.fingers):
+			gestures[ability.fingers] = {}
+		assert(not gestures[ability.fingers].has(ability.palm),
+			   "Already has ability for gesture.")
+		gestures[ability.fingers][ability.palm] = ability

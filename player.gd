@@ -105,6 +105,7 @@ func _travel_based_target(side: g.SIDES, joy: Vector2) -> Vector3:
 	var angle = rad_to_deg(joy.angle())
 
 	var prev_fingers: g.DIRS = fingers[side]
+	var prev_palm: g.DIRS = palm[side]
 
 	if in_third(angle, THIRDS.UP):
 		fingers[side] = g.DIRS.UP
@@ -205,11 +206,16 @@ func _travel_based_target(side: g.SIDES, joy: Vector2) -> Vector3:
 			_:
 				assert(false, "Impossible hand")
 
+	if prev_fingers != fingers[side] or prev_palm != palm[side]:
+		_on_gesture_changed(side)
+
 	target = ORIENTATIONS[fingers[side]][palm[side]]
 	if side == g.SIDES.LEFT:
 		target = to_left(target)
 	return g.deg_to_rad_v3(target)
 
+func _on_gesture_changed(side: g.SIDES) -> void:
+	print(side, ": ", $AbilityHandler.gestures[fingers[side]][palm[side]].name)
 
 func sidenode(side: g.SIDES) -> Node:
 	if side == g.SIDES.LEFT:
