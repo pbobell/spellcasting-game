@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="AbilityData" load_steps=2 format=3 uid="uid://b17mtvlqeahow"]
+
+[ext_resource type="Script" uid="uid://bxb5jf0mnck31" path="res://abilities/AbilityData.gd" id="1_pr7yn"]
+
+[resource]
+script = ExtResource("1_pr7yn")
+ability = "Block"
+finger_direction = "Up"
+palm_direction = "Forward"
+time_to_cast__ms_ = 800
+mana = 8
+source_power = 80
+casting_distance__feet_ = "2.0"

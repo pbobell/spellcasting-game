@@ -1,0 +1,48 @@
+{
+	"class_name": "AbilityData",
+	"csv_path": "/home/eric/projects/godot/spellcasting-game/abilities/Spellcaster-game Data - Abilities (exported).csv",
+	"variables": [
+		{
+			"extra": "",
+			"include": true,
+			"name": "Ability",
+			"type": "Name"
+		},
+		{
+			"extra": "",
+			"include": true,
+			"name": "Finger Direction",
+			"type": "String"
+		},
+		{
+			"extra": "",
+			"include": true,
+			"name": "Palm Direction",
+			"type": "String"
+		},
+		{
+			"extra": "",
+			"include": true,
+			"name": "Time to Cast\n(ms)",
+			"type": "int"
+		},
+		{
+			"extra": "",
+			"include": true,
+			"name": "Mana",
+			"type": "int"
+		},
+		{
+			"extra": "",
+			"include": true,
+			"name": "Source\nPower",
+			"type": "int"
+		},
+		{
+			"extra": "",
+			"include": true,
+			"name": "Casting\nDistance (feet)",
+			"type": "String"
+		}
+	]
+}

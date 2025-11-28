@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="AbilityData" load_steps=2 format=3 uid="uid://dwvrxb7f6uo1v"]
+
+[ext_resource type="Script" uid="uid://bxb5jf0mnck31" path="res://abilities/AbilityData.gd" id="1_2etdu"]
+
+[resource]
+script = ExtResource("1_2etdu")
+ability = "Push"
+finger_direction = "In"
+palm_direction = "Down"
+time_to_cast__ms_ = 1600
+mana = 16
+source_power = 160
+casting_distance__feet_ = "Variable"

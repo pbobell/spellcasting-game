@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="AbilityData" load_steps=2 format=3 uid="uid://lkfgtwxplbl7"]
+
+[ext_resource type="Script" uid="uid://bxb5jf0mnck31" path="res://abilities/AbilityData.gd" id="1_p1x7v"]
+
+[resource]
+script = ExtResource("1_p1x7v")
+ability = "Restore"
+finger_direction = "Up"
+palm_direction = "Backward"
+time_to_cast__ms_ = 3200
+mana = 32
+source_power = 320
+casting_distance__feet_ = "0.5"

@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="AbilityData" load_steps=2 format=3 uid="uid://ciq025frcoero"]
+
+[ext_resource type="Script" uid="uid://bxb5jf0mnck31" path="res://abilities/AbilityData.gd" id="1_nri6v"]
+
+[resource]
+script = ExtResource("1_nri6v")
+ability = "Focus"
+finger_direction = "Up"
+palm_direction = "In"
+time_to_cast__ms_ = 800
+mana = 8
+source_power = 80
+casting_distance__feet_ = "0.5"

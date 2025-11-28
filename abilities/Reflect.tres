@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="AbilityData" load_steps=2 format=3 uid="uid://dsltq3np8u71v"]
+
+[ext_resource type="Script" uid="uid://bxb5jf0mnck31" path="res://abilities/AbilityData.gd" id="1_4ltcm"]
+
+[resource]
+script = ExtResource("1_4ltcm")
+ability = "Reflect"
+finger_direction = "In"
+palm_direction = "Forward"
+time_to_cast__ms_ = 200
+mana = 2
+source_power = 20
+casting_distance__feet_ = "0.5"

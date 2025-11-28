@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="AbilityData" load_steps=2 format=3 uid="uid://cw2nc6fgm2ery"]
+
+[ext_resource type="Script" uid="uid://bxb5jf0mnck31" path="res://abilities/AbilityData.gd" id="1_f1b5r"]
+
+[resource]
+script = ExtResource("1_f1b5r")
+ability = "Charge"
+finger_direction = "Forward"
+palm_direction = "In"
+time_to_cast__ms_ = 400
+mana = 4
+source_power = 40
+casting_distance__feet_ = "1.0"
