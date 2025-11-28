@@ -52,6 +52,9 @@ func _make_ability_current(side: g.SIDES, ability: Ability) -> void:
 func select(side: g.SIDES, fingers: g.DIRS, palm: g.DIRS) -> void:
 	_make_ability_current(side, gestures[fingers][palm])
 
+func return_to_neutral(side: g.SIDES) -> void:
+	current[side] = null
+	current_ready[side] = false
 
 func _on_prep_timer_timeout(side: g.SIDES) -> void:
 	if not current[side]:
@@ -63,6 +66,12 @@ func _on_left_prep_timer_timeout() -> void:
 	_on_prep_timer_timeout(g.SIDES.LEFT)
 func _on_right_prep_timer_timeout() -> void:
 	_on_prep_timer_timeout(g.SIDES.RIGHT)
+
+## Ratio of ability casting time completion.
+func progress(side: g.SIDES) -> float:
+	if not current[side]:
+		return 0
+	return 1 - _side_prep_node(side).time_left / current[side].casting_time
 
 func cast(side: g.SIDES) -> void:
 	print("Casting from ", g.SIDES_NAME[side], ": ", current[side].name)

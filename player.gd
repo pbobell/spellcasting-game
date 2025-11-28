@@ -80,6 +80,22 @@ func _input(event: InputEvent) -> void:
 	if event.is_action_pressed("cast_right"):
 		cast(g.SIDES.RIGHT)
 
+func sidenode(side: g.SIDES) -> Node:
+	if side == g.SIDES.LEFT:
+		return $Left
+	elif side == g.SIDES.RIGHT:
+		return $Right
+	return null
+
+func sidelabel(side: g.SIDES) -> Node:
+	match side:
+		g.SIDES.LEFT:
+			return $LeftAbilityLabel
+		g.SIDES.RIGHT:
+			return $RightAbilityLabel
+		_:
+			return null
+
 ## Three identified portions of a joystick.
 enum THIRDS {IN, UP, DOWN}
 
@@ -102,6 +118,8 @@ func _travel_based_target(side: g.SIDES, joy: Vector2) -> Vector3:
 	if joy.length() < 0.25:
 		fingers[side] = g.DIRS.NONE
 		palm[side] = g.DIRS.NONE
+		$AbilityHandler.return_to_neutral(side)
+		sidelabel(side).text = ""
 		return neutral
 
 	var target = neutral
@@ -221,13 +239,7 @@ func _travel_based_target(side: g.SIDES, joy: Vector2) -> Vector3:
 ## effects can be loaded.
 func _on_gesture_changed(side: g.SIDES) -> void:
 	$AbilityHandler.select(side, fingers[side], palm[side])
-
-func sidenode(side: g.SIDES) -> Node:
-	if side == g.SIDES.LEFT:
-		return $Left
-	elif side == g.SIDES.RIGHT:
-		return $Right
-	return null
+	sidelabel(side).text = $AbilityHandler.current[side].name
 
 ## Gets desired hand positions from joysticks and moves hands towards them.
 func _adjust_hands(delta: float) -> void:
@@ -244,12 +256,17 @@ func _process(delta: float) -> void:
 	if Engine.is_editor_hint():
 		return
 	_adjust_hands(delta)
+	
+	for side in [g.SIDES.LEFT, g.SIDES.RIGHT]:
+		if not $AbilityHandler.current[side]:
+			continue
+		sidelabel(side).modulate = Color.WHITE.lerp(Color.GREEN, $AbilityHandler.progress(side))
 
 
 func _on_ability_handler_ability_ready(_side: int, _ability: Ability) -> void:
 	pass
 
 func cast(side: g.SIDES) -> void:
-	var hand = sidenode(side).get_node("Hand/hand/12683_hand_v1_FINAL")
+#	var hand = sidenode(side).get_node("Hand/hand/12683_hand_v1_FINAL")
 	if $AbilityHandler.current_ready[side]:
 		$AbilityHandler.cast(side)
