@@ -63,3 +63,7 @@ func _on_left_prep_timer_timeout() -> void:
 	_on_prep_timer_timeout(g.SIDES.LEFT)
 func _on_right_prep_timer_timeout() -> void:
 	_on_prep_timer_timeout(g.SIDES.RIGHT)
+
+func cast(side: g.SIDES) -> void:
+	print("Casting from ", g.SIDES_NAME[side], ": ", current[side].name)
+	_make_ability_current(side, current[side])

@@ -74,8 +74,11 @@ func _ready() -> void:
 	resting_rotation[g.SIDES.LEFT] = $Left.rotation
 	resting_rotation[g.SIDES.RIGHT] = $Right.rotation
 
-func _input(_event: InputEvent) -> void:
-	pass
+func _input(event: InputEvent) -> void:
+	if event.is_action_pressed("cast_left"):
+		cast(g.SIDES.LEFT)
+	if event.is_action_pressed("cast_right"):
+		cast(g.SIDES.RIGHT)
 
 ## Three identified portions of a joystick.
 enum THIRDS {IN, UP, DOWN}
@@ -218,7 +221,6 @@ func _travel_based_target(side: g.SIDES, joy: Vector2) -> Vector3:
 ## effects can be loaded.
 func _on_gesture_changed(side: g.SIDES) -> void:
 	$AbilityHandler.select(side, fingers[side], palm[side])
-	print(side, ": ", $AbilityHandler.current[side].name)
 
 func sidenode(side: g.SIDES) -> Node:
 	if side == g.SIDES.LEFT:
@@ -246,3 +248,7 @@ func _process(delta: float) -> void:
 
 func _on_ability_handler_ability_ready(_side: int, _ability: Ability) -> void:
 	pass
+
+func cast(side: g.SIDES) -> void:
+	if $AbilityHandler.current_ready[side]:
+		$AbilityHandler.cast(side)
