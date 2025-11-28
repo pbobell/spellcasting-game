@@ -1,0 +1,14 @@
+Ability,Finger Direction,Palm Direction,"Time to Cast
+(ms)",Mana,"Source
+Power","Casting
+Distance (feet)"
+Push,In,Down,1600,16,160,Variable
+Blast,Forward,Down,400,4,40,Variable
+Pull,In,Up,1600,16,160,Variable
+Absorb,Forward,Up,200,2,20,0.5
+Reflect,In,Forward,200,2,20,0.5
+Block,Up,Forward,800,8,80,2.0
+Heal,In,Backward,3200,32,320,0.5
+Restore,Up,Backward,3200,32,320,0.5
+Charge,Forward,In,400,4,40,1.0
+Focus,Up,In,800,8,80,0.5
