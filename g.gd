@@ -1,9 +1,12 @@
 @tool
 extends Node
-## Helper functions made globally available.
+## Globally-scoped utility script
 ##
 ## The contents either are used in multiple scripts, or just have no business
-## being stored in a particular node's script. Math utilities and the like.
+## being stored in a particular node's script. Math utilities, shared enums, and
+## the like.
+
+#region Math functions
 
 ## Returns angle in range [-180, 180] or [-PI, PI].
 func normalize_angle(angle: float, radians: bool = false) -> float:
@@ -64,3 +67,28 @@ func lscale (val: float, from_left: float, from_right: float,
 		/ (from_right - from_left)
 		* (to_right - to_left)
 		+ to_left)
+
+#endregion
+
+#region Hand logic
+
+## Values so arrays can be referenced with [SIDE.LEFT] instead of [0], etc.
+enum SIDES {LEFT, RIGHT};
+
+const SIDES_NAME = {
+	SIDES.LEFT: "left",
+	SIDES.RIGHT: "right"
+}
+
+## Directions for fingers and palms
+enum DIRS {NONE, IN, FWD, BACK, UP, DOWN}
+const DIRS_NAMES = {
+	DIRS.NONE: "neutral",
+	DIRS.IN: "IN",
+	DIRS.FWD: "FORWARD",
+	DIRS.BACK: "BACK",
+	DIRS.UP: "UP",
+	DIRS.DOWN: "DOWN"
+}
+
+#endregion
