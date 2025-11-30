@@ -68,6 +68,10 @@ func lscale (val: float, from_left: float, from_right: float,
 		* (to_right - to_left)
 		+ to_left)
 
+## Returns a Vector3 with the y axis zeroed out.
+func flatten(v: Vector3) -> Vector3:
+	return Vector3(v.x, 0, v.z)
+
 #endregion
 
 #region Hand logic
