@@ -13,8 +13,13 @@ var ANIMATIONS = {
 			 "AnimationLibrary_Godot_Standard/Jump"]
 }
 
+const animation_idle = "AnimationLibrary_Godot_Standard/Idle"
+const animation_death = "AnimationLibrary_Godot_Standard/Death01"
+
 ## Default animation to return to when queue is empty.
-@export var default_animation = "AnimationLibrary_Godot_Standard/Idle"
+@export var default_animation = animation_idle
+var last_animation = false
+var finished_animating = false
 
 ## Animations to play before returning to default.
 var animation_queue = []
@@ -29,7 +34,10 @@ func play_queue(new_queue = null) -> void:
 	if new_queue != null:
 		animation_queue = new_queue.duplicate()
 	if len(animation_queue) == 0:
-		play_default_animation()
+		if not finished_animating:
+			if last_animation:
+				finished_animating = true
+			play_default_animation()
 		return
 	var animation = animation_queue.pop_front()
 	$orc/AnimationPlayer.play(animation)
@@ -39,6 +47,10 @@ func _input(event: InputEvent) -> void:
 		play_queue(ANIMATIONS["jump"])
 	if event.is_action_pressed("dpad_right"):
 		play_queue(ANIMATIONS["punch"])
+	if event.is_action_pressed("dpad_down"):
+		default_animation = animation_death
+		last_animation = true
+		play_queue([])
 
 func jump():
 	if is_on_floor():
@@ -56,4 +68,4 @@ func _on_animation_player_animation_finished(_anim_name: StringName) -> void:
 	play_queue()
 
 func hit_with_spell(_ability: Node3D) -> void:
-	$orc/AnimationPlayer.play("AnimationLibrary_Godot_Standard/Hit_Chest")
+	play_queue(ANIMATIONS["hit"])
