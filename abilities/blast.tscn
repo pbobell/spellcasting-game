@@ -5,11 +5,23 @@
 [sub_resource type="SphereShape3D" id="SphereShape3D_tfm5w"]
 
 [sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_tfm5w"]
+lifetime_randomness = 0.5
+direction = Vector3(0, 0, 1)
+initial_velocity_min = 2.0
+initial_velocity_max = 2.0
+gravity = Vector3(0, 0, 0)
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_y08kd"]
+transparency = 1
+albedo_color = Color(1, 0, 0, 0.68235296)
+metallic = 1.0
+emission_enabled = true
+emission = Color(0.76, 0, 0, 1)
 
 [sub_resource type="SphereMesh" id="SphereMesh_v3cdr"]
 material = SubResource("StandardMaterial3D_y08kd")
+radius = 0.2
+height = 0.4
 
 [node name="Blast" type="RigidBody3D"]
 collision_layer = 2
@@ -22,6 +34,9 @@ script = ExtResource("1_y08kd")
 shape = SubResource("SphereShape3D_tfm5w")
 
 [node name="GPUParticles3D" type="GPUParticles3D" parent="."]
+amount = 100
+lifetime = 0.6
+preprocess = 0.1
 process_material = SubResource("ParticleProcessMaterial_tfm5w")
 draw_pass_1 = SubResource("SphereMesh_v3cdr")
 
