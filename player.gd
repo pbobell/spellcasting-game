@@ -18,6 +18,8 @@ extends Node3D
 var fingers: Array[g.DIRS] = [g.DIRS.NONE, g.DIRS.NONE]
 var palm: Array[g.DIRS] = [g.DIRS.NONE, g.DIRS.NONE]
 
+var Blast: PackedScene = preload("res://abilities/blast.tscn")
+
 const ORIENTATIONS = {
 	# When finger direction is neutral, palm is always neutral.
 	g.DIRS.NONE: {
@@ -270,7 +272,21 @@ func _process(delta: float) -> void:
 func _on_ability_handler_ability_ready(_side: int, _ability: Ability) -> void:
 	pass
 
+func sidesign(side: g.SIDES) -> int:
+	match side:
+		g.SIDES.LEFT:
+			return -1
+		g.SIDES.RIGHT:
+			return 1
+	assert(false, "Unreal side")
+	return 0
+
 func cast(side: g.SIDES) -> void:
 #	var hand = sidenode(side).get_node("Hand/hand/12683_hand_v1_FINAL")
 	if $AbilityHandler.current_ready[side]:
+		if $AbilityHandler.current[side].name == "Blast":
+			var casted = Blast.instantiate()
+			casted.cast(get_parent(),
+						sidenode(side).get_node("Hand").global_position + sidesign(side) * Vector3(1, 0, 0),
+						get_parent().get_node("Enemy").global_position)
 		$AbilityHandler.cast(side)
