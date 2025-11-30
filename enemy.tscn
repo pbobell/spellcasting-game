@@ -895,4 +895,9 @@ libraries = {
 &"AnimationLibrary_Godot_Standard": ExtResource("5_epg4t")
 }
 
+[node name="OmniLight3D" type="OmniLight3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4.246807, 3.8759072)
+light_energy = 10.0
+omni_range = 15.0
+
 [connection signal="animation_finished" from="orc/AnimationPlayer" to="." method="_on_animation_player_animation_finished"]
