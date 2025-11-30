@@ -1,4 +1,4 @@
-[gd_scene load_steps=6 format=3 uid="uid://b42k0aip0bbot"]
+[gd_scene load_steps=8 format=3 uid="uid://b42k0aip0bbot"]
 
 [ext_resource type="Script" uid="uid://cd6qgrwgjc5m8" path="res://abilities/blast.gd" id="1_y08kd"]
 
@@ -6,7 +6,12 @@
 
 [sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_tfm5w"]
 lifetime_randomness = 0.5
+particle_flag_align_y = true
+angle_min = 1.0728835e-05
+angle_max = 1.0728835e-05
 direction = Vector3(0, 0, 1)
+spread = 10.0
+flatness = 1.0
 initial_velocity_min = 2.0
 initial_velocity_max = 2.0
 gravity = Vector3(0, 0, 0)
@@ -23,21 +28,40 @@ material = SubResource("StandardMaterial3D_y08kd")
 radius = 0.2
 height = 0.4
 
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_v3cdr"]
+shading_mode = 0
+albedo_color = Color(0, 1, 1, 1)
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_pbpry"]
+material = SubResource("StandardMaterial3D_v3cdr")
+top_radius = 0.2
+bottom_radius = 0.2
+height = 4.0
+
 [node name="Blast" type="RigidBody3D"]
 collision_layer = 2
 collision_mask = 2
 contact_monitor = true
 max_contacts_reported = 1
 script = ExtResource("1_y08kd")
+speed = 80
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
 shape = SubResource("SphereShape3D_tfm5w")
 
 [node name="GPUParticles3D" type="GPUParticles3D" parent="."]
+visible = false
 amount = 100
 lifetime = 0.6
 preprocess = 0.1
 process_material = SubResource("ParticleProcessMaterial_tfm5w")
 draw_pass_1 = SubResource("SphereMesh_v3cdr")
+
+[node name="GPUParticles3D2" type="GPUParticles3D" parent="."]
+amount = 100
+lifetime = 0.6
+preprocess = 0.1
+process_material = SubResource("ParticleProcessMaterial_tfm5w")
+draw_pass_1 = SubResource("CylinderMesh_pbpry")
 
 [connection signal="body_entered" from="." to="." method="_on_body_entered"]
