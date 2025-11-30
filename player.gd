@@ -286,7 +286,8 @@ func cast(side: g.SIDES) -> void:
 	if $AbilityHandler.current_ready[side]:
 		if $AbilityHandler.current[side].name == "Blast":
 			var casted = Blast.instantiate()
-			casted.cast(get_parent(),
+			casted.cast($AbilityHandler.current[side],
+						get_parent(),
 						sidenode(side).get_node("Hand").global_position + sidesign(side) * Vector3(1, 0, 0),
 						get_parent().get_node("Enemy").global_position)
 		$AbilityHandler.cast(side)

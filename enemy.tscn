@@ -1,10 +1,11 @@
-[gd_scene load_steps=12 format=4 uid="uid://do7aoxaib8hal"]
+[gd_scene load_steps=15 format=4 uid="uid://do7aoxaib8hal"]
 
 [ext_resource type="Script" uid="uid://dng2allki82cq" path="res://enemy.gd" id="1_4gyqm"]
 [ext_resource type="Texture2D" uid="uid://csxp5s5go7qgw" path="res://assets/orc_MAW_diffuse.png" id="2_iifgy"]
 [ext_resource type="Texture2D" uid="uid://dwur7ywm7rtid" path="res://assets/orc_MAW_glow.png" id="3_epg4t"]
 [ext_resource type="Texture2D" uid="uid://b6nf3syf1toqd" path="res://assets/orc_MAW_normal.png" id="4_3yqyl"]
 [ext_resource type="AnimationLibrary" uid="uid://km2am0gv7t71" path="res://assets/AnimationLibrary_Godot_Standard.glb" id="5_epg4t"]
+[ext_resource type="Shader" uid="uid://brdbwnjcck60q" path="res://healthbar.gdshader" id="6_3yqyl"]
 
 [sub_resource type="CylinderShape3D" id="CylinderShape3D_4gyqm"]
 height = 8.0
@@ -419,6 +420,15 @@ tracks/24/keys = PackedFloat32Array(0, 1, 1.0000002, 0.9999768, 1.0000229)
 _data = {
 &"mixamo_com": SubResource("Animation_ekoxs")
 }
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_3yqyl"]
+render_priority = 0
+shader = ExtResource("6_3yqyl")
+shader_parameter/health = 0.5
+
+[sub_resource type="QuadMesh" id="QuadMesh_3yqyl"]
+material = SubResource("ShaderMaterial_3yqyl")
+size = Vector2(5, 1)
 
 [node name="Enemy" type="CharacterBody3D" groups=["targets"]]
 transform = Transform3D(10, 0, 0, 0, 10, 0, 0, 0, 10, 0, 0, 0)
@@ -904,5 +914,9 @@ libraries = {
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4.246807, 3.8759072)
 light_energy = 10.0
 omni_range = 15.0
+
+[node name="HealthBar" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 10.674209, 0)
+mesh = SubResource("QuadMesh_3yqyl")
 
 [connection signal="animation_finished" from="orc/AnimationPlayer" to="." method="_on_animation_player_animation_finished"]

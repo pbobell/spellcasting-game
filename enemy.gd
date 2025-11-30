@@ -1,5 +1,11 @@
 extends CharacterBody3D
 
+@export var health_max: int = 10
+var health: int = health_max :
+	set(value):
+		health = value
+		if get_node_or_null("HealthBar"):
+			$HealthBar.mesh.material.set_shader_parameter("health", float(health) / health_max)
 
 const SPEED = 5.0
 const JUMP_VELOCITY = 4.5
@@ -25,6 +31,7 @@ var finished_animating = false
 var animation_queue = []
 
 func _ready() -> void:
+	health = health_max
 	play_default_animation()
 
 func play_default_animation() -> void:
@@ -67,5 +74,19 @@ func _physics_process(delta: float) -> void:
 func _on_animation_player_animation_finished(_anim_name: StringName) -> void:
 	play_queue()
 
-func hit_with_spell(_ability: Node3D) -> void:
-	play_queue(ANIMATIONS["hit"])
+func kill() -> void:
+	default_animation = animation_death
+	last_animation = true
+	play_queue([])
+	await get_tree().create_timer(3).timeout
+	$HealthBar.hide()
+
+func damage(amount: int) -> void:
+	health -= amount
+	if health <= 0:
+		kill()
+
+func hit_with_spell(ability: Node3D) -> void:
+	if ability.name == "Blast":
+		play_queue(ANIMATIONS["hit"])
+		damage(3)

@@ -2,6 +2,8 @@ extends RigidBody3D
 
 @export var speed = 40
 
+var ability: Ability
+
 func _ready() -> void:
 	pass
 
@@ -9,7 +11,8 @@ func _ready() -> void:
 func flatten(v: Vector3) -> Vector3:
 	return Vector3(v.x, 0, v.z)
 
-func cast(parent: Node3D, origin: Vector3, target = null) -> void:
+func cast(p_ability: Ability, parent: Node3D, origin: Vector3, target = null) -> void:
+	ability = p_ability
 	parent.add_child(self)
 	global_position = origin
 	if target == null:
