@@ -75,6 +75,8 @@ func _on_animation_player_animation_finished(_anim_name: StringName) -> void:
 	play_queue()
 
 func kill() -> void:
+	collision_layer = 4
+	collision_mask = 4
 	default_animation = animation_death
 	last_animation = true
 	play_queue([])
