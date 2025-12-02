@@ -1,6 +1,6 @@
 [gd_scene load_steps=11 format=4 uid="uid://bahj1wwhcjwoh"]
 
-[ext_resource type="Script" uid="uid://dndu654nxouaj" path="res://abstract_ability.gd" id="1_6x0y4"]
+[ext_resource type="Script" uid="uid://dwhxc1s0ub0py" path="res://abilities/block.gd" id="1_35fdn"]
 [ext_resource type="Material" uid="uid://bw8kccsl5kdl8" path="res://abilities/subresources/block_shield_mat.tres" id="2_35fdn"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_paenr"]
@@ -138,7 +138,7 @@ size = Vector3(3, 8, 2)
 collision_layer = 8
 collision_mask = 8
 gravity_scale = 0.0
-script = ExtResource("1_6x0y4")
+script = ExtResource("1_35fdn")
 metadata/_custom_type_script = "uid://dndu654nxouaj"
 
 [node name="Shield_Celtic_Golden2" type="Node3D" parent="."]
