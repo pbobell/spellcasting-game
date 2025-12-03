@@ -12,6 +12,9 @@ var health: int = health_max :
 		if get_node_or_null("HealthBar"):
 			$HealthBar.mesh.material.set_shader_parameter("health", float(health) / health_max)
 
+@export var pos_adjustment: Vector3 = Vector3(-1.5, 5, -4)
+@export var player_center_adjustment: Vector3 = Vector3(0, 0, -3)
+
 const SPEED = 5.0
 const JUMP_VELOCITY = 4.5
 
@@ -116,9 +119,19 @@ func cast_blast() -> void:
 	var casted = Blast.instantiate()
 	casted.cast(abilities["Blast"],
 				get_parent(),
-				global_position,
-				get_player().global_position)
+				global_position + pos_adjustment,
+				get_player().global_position - player_center_adjustment,
+				self)
+
+var casting = null
 
 func _on_shoot_timer_timeout() -> void:
 	play_queue(ANIMATIONS["cast_shoot_full"])
-	cast_blast()
+	casting = cast_blast
+	$CastDelay.start(0.53)
+
+
+func _on_cast_delay_timeout() -> void:
+	if casting:
+		casting.call()
+		casting = null

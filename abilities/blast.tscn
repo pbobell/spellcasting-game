@@ -49,8 +49,8 @@ bottom_radius = 0.2
 height = 4.0
 
 [node name="Blast" type="RigidBody3D"]
-collision_layer = 2
-collision_mask = 2
+collision_layer = 255
+collision_mask = 255
 contact_monitor = true
 max_contacts_reported = 1
 script = ExtResource("1_y08kd")

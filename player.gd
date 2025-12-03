@@ -294,7 +294,8 @@ func cast(side: g.SIDES) -> void:
 				casted.cast(ability,
 							get_parent(),
 							sidenode(side).get_node("Hand").global_position + sidesign(side) * Vector3(1, 0, 0),
-							get_parent().get_node("Enemy").global_position)
+							get_parent().get_node("Enemy").global_position,
+							null)
 			"Block":
 				if active_block[side]:
 					active_block[side].reset()
