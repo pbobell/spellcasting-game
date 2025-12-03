@@ -1,6 +1,6 @@
 @tool
 extends Node3D
-## Primary player nodes and logic.
+## Primary activelayer nodes and logic.
 ##
 ## The player node holds the main input-reading code and handles the hands.
 ## The left and the right hand use the same model, with the left hand scaled by
@@ -17,6 +17,8 @@ extends Node3D
 
 var fingers: Array[g.DIRS] = [g.DIRS.NONE, g.DIRS.NONE]
 var palm: Array[g.DIRS] = [g.DIRS.NONE, g.DIRS.NONE]
+
+@export var health_max: int = 10
 
 var Blast: PackedScene = preload("res://abilities/blast.tscn")
 var Block: PackedScene = preload("res://abilities/block.tscn")
