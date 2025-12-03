@@ -153,7 +153,7 @@ func _process(delta: float) -> void:
 			print("Enemy Cast Block")
 			#cast Block
 			pass
-		if npc_damage_percent < 0.75:
+		if npc_damage_percent > 0.25:
 			#cast Heal
 			pass
 	else:
