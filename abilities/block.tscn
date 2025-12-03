@@ -145,6 +145,7 @@ metadata/_custom_type_script = "uid://dndu654nxouaj"
 transform = Transform3D(2, 0, 0, 0, 2, 0, 0, 0, 2, 0, 0, 0)
 
 [node name="Shield_Celtic_Golden" type="MeshInstance3D" parent="Shield_Celtic_Golden2"]
+unique_name_in_owner = true
 mesh = SubResource("ArrayMesh_3vkpg")
 skeleton = NodePath("")
 surface_material_override/0 = ExtResource("2_35fdn")

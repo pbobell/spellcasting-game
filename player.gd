@@ -296,9 +296,12 @@ func cast(side: g.SIDES) -> void:
 							sidenode(side).get_node("Hand").global_position + sidesign(side) * Vector3(1, 0, 0),
 							get_parent().get_node("Enemy").global_position)
 			"Block":
-				var casted = Block.instantiate()
-				active_block[side] = casted
-				casted.cast(ability,
-							get_parent(),
-							sidenode(side).get_node("Hand").global_position + sidesign(side) * Vector3(2, 0, 4))
+				if active_block[side]:
+					active_block[side].reset()
+				else:
+					var casted = Block.instantiate()
+					active_block[side] = casted
+					casted.cast(ability,
+								get_parent(),
+								sidenode(side).get_node("Hand").global_position + sidesign(side) * Vector3(2, 0, 4))
 		$AbilityHandler.cast(side)
