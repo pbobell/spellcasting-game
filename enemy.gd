@@ -13,7 +13,7 @@ var health: int = health_max :
 			$HealthBar.mesh.material.set_shader_parameter("health", float(health) / health_max)
 
 @export var pos_adjustment: Vector3 = Vector3(-1.5, 5, -4)
-@export var player_center_adjustment: Vector3 = Vector3(0, 0, -3)
+@export var player_center_adjustment: Vector3 = Vector3(2, 10, 0)
 
 const SPEED = 5.0
 const JUMP_VELOCITY = 4.5
@@ -59,7 +59,7 @@ func _load_abilities() -> void:
 		var ability = Ability.from_data(data)
 		abilities[ability.name] = ability
 
-func get_player() -> Node:
+func get_player() -> Player:
 	return get_tree().get_first_node_in_group("player")
 
 func play_default_animation() -> void:

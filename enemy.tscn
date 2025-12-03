@@ -438,6 +438,9 @@ axis_lock_linear_x = true
 axis_lock_linear_y = true
 axis_lock_linear_z = true
 script = ExtResource("1_4gyqm")
+health_max = null
+pos_adjustment = null
+player_center_adjustment = null
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4, 0)

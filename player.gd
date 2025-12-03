@@ -1,4 +1,5 @@
 @tool
+class_name Player
 extends Node3D
 ## Primary activelayer nodes and logic.
 ##
@@ -8,12 +9,10 @@ extends Node3D
 ## means we can adjust the pivot of the hands by moving the hand models
 ## inside the container Node3Ds.
 ##
-## The hands look different because mirroring one with the scale messes up the
-## surface normals (probably). At the moment, the Hand scenes only contain
-## geometry and transformations, so if we get separate models for the left and
-## right hands, it should be easy to give each their own scenes which are
-## instantiated here, replacing the current $Left/LeftHand and $Right/RightHand,
-## without otherwise changing the logic.
+## At the moment, the Hand scenes only contain geometry and transformations, so
+## if we get separate models for the left and right hands, it should be easy to
+## give each their own scenes which are instantiated here, replacing the current
+## $Left/Hand and $Right/Hand, without otherwise changing the logic.
 
 var fingers: Array[g.DIRS] = [g.DIRS.NONE, g.DIRS.NONE]
 var palm: Array[g.DIRS] = [g.DIRS.NONE, g.DIRS.NONE]
@@ -296,7 +295,7 @@ func cast(side: g.SIDES) -> void:
 				casted.cast(ability,
 							get_parent(),
 							sidenode(side).get_node("Hand").global_position + sidesign(side) * Vector3(1, 0, 0),
-							get_parent().get_node("Enemy").global_position,
+							g.flatten(get_parent().get_node("Enemy").global_position),
 							null)
 			"Block":
 				if active_block[side]:
