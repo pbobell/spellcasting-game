@@ -145,11 +145,12 @@ func _on_cast_delay_timeout() -> void:
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
-	var player_damage_percent = 1 - (get_player().health)/get_player().health_max
-	var npc_damage_percent = 1 - (health/health_max)
+	var player_damage_percent = 1 - float(get_player().health)/get_player().health_max
+	var npc_damage_percent = 1 - (float(health)/health_max)
 	
 	if npc_preservation * npc_damage_percent > npc_aggression * player_damage_percent:
 		if active_block[g.SIDES.LEFT] == null:
+			print("Enemy Cast Block")
 			#cast Block
 			pass
 		if npc_damage_percent < 0.75:
