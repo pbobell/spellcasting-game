@@ -134,12 +134,10 @@ albedo_color = Color(0, 0.46666667, 1, 0)
 [sub_resource type="BoxShape3D" id="BoxShape3D_35fdn"]
 size = Vector3(3, 8, 2)
 
-[node name="Block" type="RigidBody3D"]
+[node name="Block" type="StaticBody3D"]
 collision_layer = 8
 collision_mask = 8
-gravity_scale = 0.0
 script = ExtResource("1_35fdn")
-metadata/_custom_type_script = "uid://dndu654nxouaj"
 
 [node name="Shield_Celtic_Golden2" type="Node3D" parent="."]
 transform = Transform3D(2, 0, 0, 0, 2, 0, 0, 0, 2, 0, 0, 0)

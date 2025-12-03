@@ -53,7 +53,7 @@ func _load_abilities() -> void:
 		var ability = Ability.from_data(data)
 		abilities[ability.name] = ability
 
-func get_player() -> Node:
+func get_player() -> Player:
 	return get_tree().get_first_node_in_group("player")
 
 func play_default_animation() -> void:
