@@ -18,6 +18,11 @@ var health: int = health_max :
 const SPEED = 5.0
 const JUMP_VELOCITY = 4.5
 
+var active_block: Array[Node] = [null, null]
+
+var npc_aggression = randi_range(5, 15)
+var npc_preservation = 20 - npc_aggression
+
 var ANIMATIONS = {
 	"punch": ["AnimationLibrary_Godot_Standard/Punch_Enter",
 			  "AnimationLibrary_Godot_Standard/Punch_Jab"],
@@ -42,6 +47,7 @@ var finished_animating = false
 var animation_queue = []
 
 func _ready() -> void:
+	print("Aggression: ", npc_aggression, ", Preservation: ", npc_preservation)
 	health = health_max
 	play_default_animation()
 	_load_abilities()
@@ -135,3 +141,20 @@ func _on_cast_delay_timeout() -> void:
 	if casting:
 		casting.call()
 		casting = null
+
+
+# Called every frame. 'delta' is the elapsed time since the previous frame.
+func _process(delta: float) -> void:
+	var player_damage_percent = 1 - (get_player().health)/get_player().health_max
+	var npc_damage_percent = 1 - (health/health_max)
+	
+	if npc_preservation * npc_damage_percent > npc_aggression * player_damage_percent:
+		if active_block[g.SIDES.LEFT] == null:
+			#cast Block
+			pass
+		if npc_damage_percent < 0.75:
+			#cast Heal
+			pass
+	else:
+		#cast Blast
+		pass
