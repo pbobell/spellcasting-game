@@ -16,7 +16,10 @@ var ANIMATIONS = {
 	"hit": ["AnimationLibrary_Godot_Standard/Hit_Chest"],
 	"headshot": ["AnimationLibrary_Godot_Standard/Hit_Head"],
 	"jump": ["AnimationLibrary_Godot_Standard/Jump_Start",
-			 "AnimationLibrary_Godot_Standard/Jump"]
+			 "AnimationLibrary_Godot_Standard/Jump"],
+	"cast_shoot_full": ["AnimationLibrary_Godot_Standard/Spell_Simple_Enter",
+						"AnimationLibrary_Godot_Standard/Spell_Simple_Shoot",
+						"AnimationLibrary_Godot_Standard/Spell_Simple_Exit"]
 }
 
 const animation_idle = "AnimationLibrary_Godot_Standard/Idle"
@@ -95,3 +98,7 @@ func hit_with_spell(ability: Node3D) -> void:
 	if ability.name == "Blast":
 		play_queue(ANIMATIONS["hit"])
 		damage(3)
+
+
+func _on_shoot_timer_timeout() -> void:
+	play_queue(ANIMATIONS["cast_shoot_full"])
