@@ -34,6 +34,9 @@ func _ready() -> void:
 	health = health_max
 	play_default_animation()
 
+func get_player() -> Node:
+	return get_tree().get_first_node_in_group("player")
+
 func play_default_animation() -> void:
 	$orc/AnimationPlayer.play(default_animation)
 
