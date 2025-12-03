@@ -13,7 +13,7 @@ var health: int = health_max :
 			$HealthBar.mesh.material.set_shader_parameter("health", float(health) / health_max)
 
 @export var pos_adjustment: Vector3 = Vector3(-1.5, 5, -4)
-@export var player_center_adjustment: Vector3 = Vector3(0, 0, -3)
+@export var player_center_adjustment: Vector3 = Vector3(2, 10, 0)
 
 const SPEED = 5.0
 const JUMP_VELOCITY = 4.5

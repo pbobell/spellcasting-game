@@ -22,10 +22,10 @@ func _input(event):
 			if Engine.has_singleton("Launchpin"):
 				Engine.get_singleton("Launchpin").run_scene()
 			else:
-				print("Launching game...")
+#				print("Launching game...")
 				run_project()
 		else:
-			print("Exiting game...")
+#			print("Exiting game...")
 			quit_game()
 
 func _on_editor_focus_entered():

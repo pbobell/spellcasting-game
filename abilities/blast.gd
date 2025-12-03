@@ -10,10 +10,8 @@ func cast(p_ability: Ability, parent: Node3D, origin: Vector3, target = null, ca
 	if caster:
 		collision_mask &= ~caster.collision_layer
 		collision_layer &= ~caster.collision_mask
-	if target == null:
-		linear_velocity = Vector3(0, 10, 40)
-	else:
-		linear_velocity = Vector3(0, 10, 0) + speed * g.flatten(global_position).direction_to(g.flatten(target))
+	assert(target)
+	linear_velocity = Vector3(0, 10, 0) + speed * g.flatten(global_position).direction_to(target)
 
 
 func _on_body_entered(body: Node) -> void:
