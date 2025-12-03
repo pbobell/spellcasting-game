@@ -108,6 +108,12 @@ dpad_down={
 ]
 }
 
+[layer_names]
+
+3d_physics/layer_1="player"
+3d_physics/layer_2="ground"
+3d_physics/layer_3="enemy"
+
 [rendering]
 
 renderer/rendering_method="gl_compatibility"

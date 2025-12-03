@@ -8,13 +8,11 @@ var ability: Ability
 func _ready() -> void:
 	pass
 
-func cast(p_ability: Ability, parent: Node3D, origin: Vector3, target = null, caster: Node3D = null) -> void:
+func cast(p_ability: Ability, parent: Node3D, origin: Vector3, target = null, target_layer: int = 0) -> void:
 	ability = p_ability
 	parent.add_child(self)
 	global_position = origin
-	if caster:
-		collision_mask &= ~caster.collision_layer
-		collision_layer &= ~caster.collision_mask
+	collision_mask |= target_layer
 	assert(target)
 	linear_velocity = Vector3(0, 10, 0) + speed * g.flatten(global_position).direction_to(target)
 
