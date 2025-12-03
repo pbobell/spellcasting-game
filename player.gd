@@ -21,6 +21,7 @@ var palm: Array[g.DIRS] = [g.DIRS.NONE, g.DIRS.NONE]
 var Blast: PackedScene = preload("res://abilities/blast.tscn")
 var Block: PackedScene = preload("res://abilities/block.tscn")
 
+var active_block: Array[Node] = [null, null]
 
 const ORIENTATIONS = {
 	# When finger direction is neutral, palm is always neutral.
@@ -296,6 +297,7 @@ func cast(side: g.SIDES) -> void:
 							get_parent().get_node("Enemy").global_position)
 			"Block":
 				var casted = Block.instantiate()
+				active_block[side] = casted
 				casted.cast(ability,
 							get_parent(),
 							sidenode(side).get_node("Hand").global_position + sidesign(side) * Vector3(2, 0, 4))
