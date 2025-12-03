@@ -1,5 +1,10 @@
 extends CharacterBody3D
 
+var Blast: PackedScene = preload("res://abilities/blast.tscn")
+
+const RES_DIR = "res://abilities"
+var abilities: Dictionary
+
 @export var health_max: int = 10
 var health: int = health_max :
 	set(value):
@@ -36,6 +41,14 @@ var animation_queue = []
 func _ready() -> void:
 	health = health_max
 	play_default_animation()
+	_load_abilities()
+
+func _load_abilities() -> void:
+	for f in ["Blast.tres", "Block.tres", "Heal.tres"]:
+		f = RES_DIR.path_join(f)
+		var data = ResourceLoader.load(f)
+		var ability = Ability.from_data(data)
+		abilities[ability.name] = ability
 
 func get_player() -> Node:
 	return get_tree().get_first_node_in_group("player")
@@ -99,6 +112,13 @@ func hit_with_spell(ability: Node3D) -> void:
 		play_queue(ANIMATIONS["hit"])
 		damage(3)
 
+func cast_blast() -> void:
+	var casted = Blast.instantiate()
+	casted.cast(abilities["Blast"],
+				get_parent(),
+				global_position,
+				get_player().global_position)
 
 func _on_shoot_timer_timeout() -> void:
 	play_queue(ANIMATIONS["cast_shoot_full"])
+	cast_blast()
