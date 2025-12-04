@@ -7,7 +7,7 @@ extends StaticBody3D
 var ability: Ability
 
 func _ready() -> void:
-	pass
+	g.make_surface_material_unique(%Shield_Celtic_Golden)
 
 ## "Casts" the ability into the game world.
 func cast(p_ability: Ability, parent: Node3D, origin: Vector3, owner_layer: int, facing: float = 0) -> void:

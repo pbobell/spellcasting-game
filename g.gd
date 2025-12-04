@@ -84,6 +84,23 @@ func flatten(v: Vector3) -> Vector3:
 
 #endregion
 
+#region Node manipulation
+
+## Creates unique copies of surface materials for MeshInstance3D nodes.
+## This is necessary because often you want to use the same material multiple
+## times, so you can't use the "Make unique" button without having to constantly
+## adjust them all separately. But, if they aren't unique, then game-time
+## changes to any properties, such as transparency, will be reflected across all
+## instances of the node in the game.
+##
+## surfaces should be an array of surface integers, or null for all.
+func make_surface_material_unique(node: MeshInstance3D, surfaces = null):
+	if surfaces == null:
+		surfaces = range(node.get_surface_override_material_count())
+	for surface in surfaces:
+		node.set_surface_override_material(surface, node.get_surface_override_material(surface).duplicate())
+
+
 #region Hand logic
 
 ## Values so arrays can be referenced with [SIDE.LEFT] instead of [0], etc.
