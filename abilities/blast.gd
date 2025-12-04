@@ -16,6 +16,10 @@ func cast(p_ability: Ability, parent: Node3D, origin: Vector3, target = null, ta
 	assert(target)
 	linear_velocity = Vector3(0, 10, 0) + speed * g.flatten(global_position).direction_to(target)
 
+func _process(_delta: float) -> void:
+	if global_position.y < 0:
+		queue_free()
+
 func _on_body_entered(body: Node) -> void:
 	if body.is_in_group("targets"):
 		body.hit_with_spell(self)

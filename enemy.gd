@@ -127,7 +127,7 @@ func cast_blast() -> void:
 				get_parent(),
 				global_position + pos_adjustment,
 				get_player().global_position - player_center_adjustment,
-				0)
+				g.COLLISION_LAYER_PLAYER)
 
 var casting = null
 

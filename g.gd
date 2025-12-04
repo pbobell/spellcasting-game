@@ -6,6 +6,14 @@ extends Node
 ## being stored in a particular node's script. Math utilities, shared enums, and
 ## the like.
 
+#region Constants
+
+# Keep these synchronized with the layer names in Project -> Project Settings
+# -> Layer Names -> 3D Physics: layer names.s
+const COLLISION_LAYER_PLAYER = 1
+const COLLISION_LAYER_GROUND = 2
+const COLLISION_LAYER_ENEMY = 4
+
 #region Math functions
 
 ## Returns angle in range [-180, 180] or [-PI, PI].
