@@ -1,6 +1,7 @@
 extends CharacterBody3D
 
 var Blast: PackedScene = preload("res://abilities/blast.tscn")
+var Block: PackedScene = preload("res://abilities/block.tscn")
 
 const RES_DIR = "res://abilities"
 var abilities: Dictionary
@@ -118,10 +119,9 @@ func damage(amount: int) -> void:
 	if health <= 0:
 		kill()
 
-func hit_with_spell(ability: Node3D) -> void:
-	if ability.name == "Blast":
-		play_queue(ANIMATIONS["hit"])
-		damage(3)
+func hit_with_blast(blast: Node3D) -> void:
+	play_queue(ANIMATIONS["hit"])
+	damage(blast.power)
 
 func cast_blast() -> void:
 	state = STATES.RECOVERING
@@ -130,7 +130,24 @@ func cast_blast() -> void:
 				get_parent(),
 				global_position + pos_adjustment,
 				get_player().global_position - player_center_adjustment,
-				g.COLLISION_LAYER_PLAYER)
+				g.COLLISION_LAYER.PLAYER)
+
+func cast_block() -> void:
+	state = STATES.RECOVERING
+	var casted = Block.instantiate()
+	active_block[g.SIDES.LEFT] = casted
+	casted.cast(abilities["Block"],
+				get_parent(),
+				global_position + pos_adjustment,
+				g.COLLISION_LAYER.ENEMY,
+				PI)
+
+func cast_block_reset() -> void:
+	state = STATES.RECOVERING
+	if active_block[g.SIDES.LEFT]:
+		active_block[g.SIDES.LEFT].reset()
+	else:
+		cast_block()
 
 var casting = null
 
@@ -165,9 +182,9 @@ func think() -> void:
 	
 	if npc_preservation * npc_damage_percent > npc_aggression * player_damage_percent:
 		if active_block[g.SIDES.LEFT] == null:
-			print("Enemy Cast Block")
-			#cast Block
-			pass
+			start_cast_reach(cast_block)
+		else:
+			start_cast_reach(cast_block_reset)
 		if npc_damage_percent > 0.25:
 			#cast Heal
 			pass

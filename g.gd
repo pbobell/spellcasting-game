@@ -10,9 +10,11 @@ extends Node
 
 # Keep these synchronized with the layer names in Project -> Project Settings
 # -> Layer Names -> 3D Physics: layer names.s
-const COLLISION_LAYER_PLAYER = 1
-const COLLISION_LAYER_GROUND = 2
-const COLLISION_LAYER_ENEMY = 4
+enum COLLISION_LAYER {
+	PLAYER = 1,
+	GROUND = 2,
+	ENEMY = 4,
+}
 
 #region Math functions
 

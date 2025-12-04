@@ -4,6 +4,7 @@ extends RigidBody3D
 var ability: Ability
 
 @export var speed = 40
+@export var power = 3
 
 func _ready() -> void:
 	pass
@@ -22,7 +23,7 @@ func _process(_delta: float) -> void:
 
 func _on_body_entered(body: Node) -> void:
 	if body.is_in_group("targets"):
-		body.hit_with_spell(self)
+		body.hit_with_blast(self)
 		queue_free()
 	if body.is_in_group("ground"):
 		queue_free()
