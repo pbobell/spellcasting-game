@@ -921,7 +921,6 @@ mesh = SubResource("QuadMesh_3yqyl")
 
 [node name="ShootTimer" type="Timer" parent="."]
 wait_time = 2.0
-autostart = true
 
 [node name="CastDelay" type="Timer" parent="."]
 one_shot = true

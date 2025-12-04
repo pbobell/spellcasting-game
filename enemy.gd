@@ -100,6 +100,8 @@ func _physics_process(delta: float) -> void:
 
 
 func _on_animation_player_animation_finished(_anim_name: StringName) -> void:
+	if state == STATES.RECOVERING and len(animation_queue) == 0:
+		state = STATES.IDLE
 	play_queue()
 
 func kill() -> void:
@@ -122,6 +124,7 @@ func hit_with_spell(ability: Node3D) -> void:
 		damage(3)
 
 func cast_blast() -> void:
+	state = STATES.RECOVERING
 	var casted = Blast.instantiate()
 	casted.cast(abilities["Blast"],
 				get_parent(),
@@ -132,19 +135,31 @@ func cast_blast() -> void:
 var casting = null
 
 func _on_shoot_timer_timeout() -> void:
-	play_queue(ANIMATIONS["cast_shoot_full"])
-	casting = cast_blast
-	$CastDelay.start(0.53)
+	start_cast_reach(cast_blast)
 
+func start_cast_reach(cast_fn: Callable) -> void:
+	state = STATES.ACTING
+	play_queue(ANIMATIONS["cast_shoot_full"])
+	casting = cast_fn
+	$CastDelay.start(0.53)
 
 func _on_cast_delay_timeout() -> void:
 	if casting:
 		casting.call()
 		casting = null
 
+enum STATES {
+	IDLE,
+	ACTING,
+	RECOVERING,
+}
+var state: STATES = STATES.IDLE
 
-# Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(delta: float) -> void:
+## Main NPC logic function, called every frame.
+func think() -> void:
+	if state == STATES.ACTING or state == STATES.RECOVERING:
+		return
+	
 	var player_damage_percent = 1 - float(get_player().health)/get_player().health_max
 	var npc_damage_percent = 1 - (float(health)/health_max)
 	
@@ -157,5 +172,8 @@ func _process(delta: float) -> void:
 			#cast Heal
 			pass
 	else:
-		#cast Blast
-		pass
+		start_cast_reach(cast_blast)
+
+# Called every frame. 'delta' is the elapsed time since the previous frame.
+func _process(_delta: float) -> void:
+	think()
