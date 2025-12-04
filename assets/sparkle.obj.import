@@ -1,0 +1,25 @@
+[remap]
+
+importer="wavefront_obj"
+importer_version=1
+type="Mesh"
+uid="uid://c3wo5wh08r1f4"
+path="res://.godot/imported/sparkle.obj-e32ef0a23c059ee06b83325882d0a3df.mesh"
+
+[deps]
+
+files=["res://.godot/imported/sparkle.obj-e32ef0a23c059ee06b83325882d0a3df.mesh"]
+
+source_file="res://assets/sparkle.obj"
+dest_files=["res://.godot/imported/sparkle.obj-e32ef0a23c059ee06b83325882d0a3df.mesh", "res://.godot/imported/sparkle.obj-e32ef0a23c059ee06b83325882d0a3df.mesh"]
+
+[params]
+
+generate_tangents=true
+generate_lods=true
+generate_shadow_mesh=true
+generate_lightmap_uv2=false
+generate_lightmap_uv2_texel_size=0.2
+scale_mesh=Vector3(1, 1, 1)
+offset_mesh=Vector3(0, 0, 0)
+force_disable_mesh_compression=false
