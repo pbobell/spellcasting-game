@@ -2,6 +2,7 @@ extends CharacterBody3D
 
 var Blast: PackedScene = preload("res://abilities/blast.tscn")
 var Block: PackedScene = preload("res://abilities/block.tscn")
+var Heal: PackedScene = preload("res://abilities/heal.tscn")
 
 const RES_DIR = "res://abilities"
 var abilities: Dictionary
@@ -17,6 +18,7 @@ var dead: bool = false
 
 @export var pos_adjustment: Vector3 = Vector3(-1.5, 5, -4)
 @export var player_center_adjustment: Vector3 = Vector3(2, 10, 0)
+@export var heal_adjustment: Vector3 = Vector3(0, 5, -2)
 
 const SPEED = 5.0
 const JUMP_VELOCITY = 4.5
@@ -121,6 +123,9 @@ func damage(amount: int) -> void:
 	if health <= 0:
 		kill()
 
+func heal(amount: int) -> void:
+	health = min(health + amount, health_max)
+
 func hit_with_blast(blast: Node3D) -> void:
 	play_queue(ANIMATIONS["hit"])
 	damage(blast.power)
@@ -150,6 +155,14 @@ func cast_block_reset() -> void:
 		active_block[g.SIDES.LEFT].reset()
 	else:
 		cast_block()
+
+func cast_heal() -> void:
+	state = STATES.RECOVERING
+	var casted = Heal.instantiate()
+	casted.cast(abilities["Heal"],
+				get_parent(),
+				global_position + heal_adjustment,
+				self)
 
 var casting = null
 
@@ -184,15 +197,14 @@ func think() -> void:
 	
 	var player_damage_percent = 1 - float(get_player().health)/get_player().health_max
 	var npc_damage_percent = 1 - (float(health)/health_max)
-	
+
 	if npc_preservation * npc_damage_percent > npc_aggression * player_damage_percent:
 		if active_block[g.SIDES.LEFT] == null:
 			start_cast_reach(cast_block)
 		else:
 			start_cast_reach(cast_block_reset)
 		if npc_damage_percent > 0.25:
-			#cast Heal
-			pass
+			start_cast_reach(cast_heal)
 	else:
 		start_cast_reach(cast_blast)
 
