@@ -13,6 +13,8 @@ var health: int = health_max :
 		if get_node_or_null("HealthBar"):
 			$HealthBar.mesh.material.set_shader_parameter("health", float(health) / health_max)
 
+var dead: bool = false
+
 @export var pos_adjustment: Vector3 = Vector3(-1.5, 5, -4)
 @export var player_center_adjustment: Vector3 = Vector3(2, 10, 0)
 
@@ -106,8 +108,8 @@ func _on_animation_player_animation_finished(_anim_name: StringName) -> void:
 	play_queue()
 
 func kill() -> void:
-	collision_layer = 4
-	collision_mask = 4
+	dead = true
+	collision_layer = 0
 	default_animation = animation_death
 	last_animation = true
 	play_queue([])
@@ -174,6 +176,9 @@ var state: STATES = STATES.IDLE
 
 ## Main NPC logic function, called every frame.
 func think() -> void:
+	if dead:
+		return
+
 	if state == STATES.ACTING or state == STATES.RECOVERING:
 		return
 	
