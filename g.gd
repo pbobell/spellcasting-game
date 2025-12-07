@@ -16,6 +16,27 @@ enum COLLISION_LAYER {
 	ENEMY = 4,
 }
 
+#endregion
+
+#region Shared State
+
+## If the game was launched with the menu, and so quit actions should return to the menu.
+var menu_launcher: bool = false
+
+#endregion
+
+#region Logic functions
+
+func quit() -> void:
+	if get_tree().current_scene.is_in_group("menu"):
+		get_tree().quit()
+	if menu_launcher:
+		get_tree().change_scene_to_file("res://menu.tscn")
+	else:
+		get_tree().quit()
+
+#endregion
+
 #region Math functions
 
 ## Returns angle in range [-180, 180] or [-PI, PI].

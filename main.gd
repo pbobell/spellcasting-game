@@ -7,7 +7,7 @@ func _ready() -> void:
 func _input(event: InputEvent) -> void:
 	# Escape or menu button to quit.
 	if event.is_action_pressed("ui_cancel"):
-		get_tree().quit()
+		g.quit()
 
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.

@@ -28,6 +28,7 @@ enabled=PackedStringArray("res://addons/CSV_to_resource/plugin.cfg", "res://addo
 targets="Valid spell targets"
 player=""
 ground=""
+menu=""
 
 [input]
 

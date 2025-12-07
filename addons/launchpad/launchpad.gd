@@ -36,7 +36,7 @@ func _on_editor_focus_exited():
 
 func quit_game():
 	if not Engine.is_editor_hint():
-		get_tree().quit()
+		g.quit()
 	else:
 		EditorInterface.stop_playing_scene()
 
