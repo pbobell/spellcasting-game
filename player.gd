@@ -14,6 +14,11 @@ extends Node3D
 ## give each their own scenes which are instantiated here, replacing the current
 ## $Left/Hand and $Right/Hand, without otherwise changing the logic.
 
+signal game_over
+signal camera_effect(effect: g.CAMERA_EFFECTS)
+
+var dead: bool = false
+
 var fingers: Array[g.DIRS] = [g.DIRS.NONE, g.DIRS.NONE]
 var palm: Array[g.DIRS] = [g.DIRS.NONE, g.DIRS.NONE]
 
@@ -22,6 +27,8 @@ var palm: Array[g.DIRS] = [g.DIRS.NONE, g.DIRS.NONE]
 
 var Blast: PackedScene = preload("res://abilities/blast.tscn")
 var Block: PackedScene = preload("res://abilities/block.tscn")
+var Heal: PackedScene = preload("res://abilities/heal.tscn")
+
 
 var active_block: Array[Node] = [null, null]
 
@@ -82,6 +89,9 @@ func _ready() -> void:
 	resting_rotation[g.SIDES.RIGHT] = $Right.rotation
 
 func _input(event: InputEvent) -> void:
+	if dead:
+		return
+
 	if event.is_action_pressed("cast_left"):
 		cast(g.SIDES.LEFT)
 	if event.is_action_pressed("cast_right"):
@@ -265,6 +275,10 @@ func _adjust_hands(delta: float) -> void:
 func _process(delta: float) -> void:
 	if Engine.is_editor_hint():
 		return
+	
+	if dead:
+		return
+
 	_adjust_hands(delta)
 	
 	for side in [g.SIDES.LEFT, g.SIDES.RIGHT]:
@@ -299,6 +313,7 @@ func cast(side: g.SIDES) -> void:
 				casted.cast(ability,
 							get_parent(),
 							sidenode(side).get_node("Hand").global_position + sidesign(side) * Vector3(1, 0, 0),
+							g.COLLISION_LAYER.PLAYER,
 							g.flatten(get_parent().get_node("Enemy").global_position),
 							g.COLLISION_LAYER.ENEMY)
 			"Block":
@@ -311,4 +326,31 @@ func cast(side: g.SIDES) -> void:
 								get_parent(),
 								sidenode(side).get_node("Hand").global_position + sidesign(side) * Vector3(2, 0, 4),
 								g.COLLISION_LAYER.PLAYER)
+			"Heal":
+				var casted = Heal.instantiate()
+				casted.cast(ability,
+							get_parent(),
+							sidenode(side).get_node("Hand").global_position + Vector3(0, 5, -2),
+							self)
 		$AbilityHandler.cast(side)
+
+func kill() -> void:
+	game_over.emit()
+
+func damage(amount: int) -> void:
+	camera_effect.emit(g.CAMERA_EFFECTS.FLASH)
+	health -= amount
+	if health <= 0:
+		kill()
+
+func heal(amount: int) -> void:
+	health = min(health + amount, health_max)
+
+func hit_with_blast(blast: Node3D) -> void:
+	print("Ow")
+	damage(blast.power)
+
+
+func _on_hitbox_body_entered(body: Node3D) -> void:
+	if body.is_in_group("blasts"):
+		hit_with_blast(body)

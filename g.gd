@@ -16,6 +16,11 @@ enum COLLISION_LAYER {
 	ENEMY = 4,
 }
 
+# Camera effects for Player node to request from main scene
+enum CAMERA_EFFECTS {
+	FLASH = 1,
+}
+
 #endregion
 
 #region Shared State

@@ -136,6 +136,7 @@ func cast_blast() -> void:
 	casted.cast(abilities["Blast"],
 				get_parent(),
 				global_position + pos_adjustment,
+				g.COLLISION_LAYER.ENEMY,
 				get_player().global_position - player_center_adjustment,
 				g.COLLISION_LAYER.PLAYER)
 

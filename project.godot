@@ -29,6 +29,8 @@ targets="Valid spell targets"
 player=""
 ground=""
 menu=""
+hitboxes=""
+blasts=""
 
 [input]
 

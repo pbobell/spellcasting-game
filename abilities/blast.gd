@@ -9,10 +9,11 @@ var ability: Ability
 func _ready() -> void:
 	pass
 
-func cast(p_ability: Ability, parent: Node3D, origin: Vector3, target = null, target_layer: int = 0) -> void:
+func cast(p_ability: Ability, parent: Node3D, origin: Vector3, origin_layer: int = 0, target = null, target_layer: int = 0) -> void:
 	ability = p_ability
 	parent.add_child(self)
 	global_position = origin
+	collision_layer |= origin_layer
 	collision_mask |= target_layer
 	assert(target)
 	linear_velocity = Vector3(0, 10, 0) + speed * g.flatten(global_position).direction_to(target)
@@ -24,6 +25,10 @@ func _process(_delta: float) -> void:
 func _on_body_entered(body: Node) -> void:
 	if body.is_in_group("targets"):
 		body.hit_with_blast(self)
+		queue_free()
+	if body.is_in_group("hitboxes"):
+		print("Hit hitbox")
+		body.get_parent().hit_with_blast(self)
 		queue_free()
 	if body.is_in_group("ground"):
 		queue_free()

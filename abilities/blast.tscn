@@ -48,7 +48,7 @@ top_radius = 0.2
 bottom_radius = 0.2
 height = 4.0
 
-[node name="Blast" type="RigidBody3D"]
+[node name="Blast" type="RigidBody3D" groups=["blasts"]]
 collision_layer = 0
 collision_mask = 2
 contact_monitor = true

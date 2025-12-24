@@ -13,3 +13,17 @@ func _input(event: InputEvent) -> void:
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(_delta: float) -> void:
 	pass
+
+
+func _on_player_camera_effect(effect: int) -> void:
+	match effect:
+		g.CAMERA_EFFECTS.FLASH:
+			$Camera3D.attributes.exposure_multiplier = 4
+			var tween = get_tree().create_tween()
+			tween.tween_property($Camera3D.attributes, "exposure_multiplier", 1, .25)
+		_:
+			push_warning("Unimplemented camera effect ", effect)
+
+func _on_player_game_over() -> void:
+	$Player.dead = true
+	print("Game over!")
