@@ -23,7 +23,11 @@ var fingers: Array[g.DIRS] = [g.DIRS.NONE, g.DIRS.NONE]
 var palm: Array[g.DIRS] = [g.DIRS.NONE, g.DIRS.NONE]
 
 @export var health_max: int = 10
-@onready var health: int = health_max
+@onready var health: int = health_max : 
+	set(value):
+		health = value
+		$Left/Hand.health = health
+		$Right/Hand.health = health
 
 var Blast: PackedScene = preload("res://abilities/blast.tscn")
 var Block: PackedScene = preload("res://abilities/block.tscn")

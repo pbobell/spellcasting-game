@@ -7,6 +7,13 @@ var Heal: PackedScene = preload("res://abilities/heal.tscn")
 const RES_DIR = "res://abilities"
 var abilities: Dictionary
 
+var stopped: bool = false
+
+func game_over():
+	stopped = true
+	animation_queue = []
+	$orc/AnimationPlayer.stop()
+
 @export var health_max: int = 10
 var health: int = health_max :
 	set(value):
@@ -211,4 +218,6 @@ func think() -> void:
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(_delta: float) -> void:
+	if stopped:
+		return
 	think()
