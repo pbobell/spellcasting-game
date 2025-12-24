@@ -93,5 +93,15 @@ shape = SubResource("ConcavePolygonShape3D_pp5ox")
 [node name="Enemy" parent="." instance=ExtResource("4_1bvp3")]
 transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, 0, 0, 28.282784)
 
+[node name="GameOver" type="Label" parent="."]
+visible = false
+offset_left = 395.0
+offset_top = 248.0
+offset_right = 805.0
+offset_bottom = 347.0
+theme_override_colors/font_color = Color(1, 0, 0, 1)
+theme_override_font_sizes/font_size = 72
+text = "Game Over!"
+
 [connection signal="camera_effect" from="Player" to="." method="_on_player_camera_effect"]
 [connection signal="game_over" from="Player" to="." method="_on_player_game_over"]

@@ -27,4 +27,5 @@ func _on_player_camera_effect(effect: int) -> void:
 func _on_player_game_over() -> void:
 	$Player.dead = true
 	$Enemy.game_over()
+	$GameOver.show()
 	print("Game over!")
