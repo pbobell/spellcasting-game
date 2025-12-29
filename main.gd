@@ -1,5 +1,8 @@
 extends Node3D
 
+## Set background music volume dB to this value when game is over.
+@export var dampen_sound_on_game_over: int = -20
+
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	pass # Replace with function body.
@@ -28,5 +31,5 @@ func _on_player_game_over() -> void:
 	$Player.dead = true
 	$Enemy.game_over()
 	$GameOver.show()
-	$BackgroundMusic.volume_db = -10
+	$BackgroundMusic.volume_db = dampen_sound_on_game_over
 	print("Game over!")
