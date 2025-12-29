@@ -1,8 +1,9 @@
-[gd_scene load_steps=10 format=4 uid="uid://blxqkeii1t7ak"]
+[gd_scene load_steps=11 format=4 uid="uid://blxqkeii1t7ak"]
 
 [ext_resource type="Script" uid="uid://b4sadjvmjrg5w" path="res://main.gd" id="1_0xm2m"]
 [ext_resource type="PackedScene" uid="uid://dmnm6gaawpg2q" path="res://player.tscn" id="2_0xm2m"]
 [ext_resource type="PackedScene" uid="uid://do7aoxaib8hal" path="res://enemy.tscn" id="4_1bvp3"]
+[ext_resource type="AudioStream" uid="uid://dcp7ymkr4bmif" path="res://assets/First Attempt at Anything v2.wav" id="4_lquwl"]
 
 [sub_resource type="CameraAttributesPractical" id="CameraAttributesPractical_h2yge"]
 
@@ -92,6 +93,10 @@ shape = SubResource("ConcavePolygonShape3D_pp5ox")
 
 [node name="Enemy" parent="." instance=ExtResource("4_1bvp3")]
 transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, 0, 0, 28.282784)
+
+[node name="BackgroundMusic" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("4_lquwl")
+autoplay = true
 
 [node name="GameOver" type="Label" parent="."]
 visible = false

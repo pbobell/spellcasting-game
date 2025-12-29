@@ -28,4 +28,5 @@ func _on_player_game_over() -> void:
 	$Player.dead = true
 	$Enemy.game_over()
 	$GameOver.show()
+	$BackgroundMusic.volume_db = -10
 	print("Game over!")

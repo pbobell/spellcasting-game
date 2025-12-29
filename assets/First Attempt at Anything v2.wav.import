@@ -1,0 +1,24 @@
+[remap]
+
+importer="wav"
+type="AudioStreamWAV"
+uid="uid://dcp7ymkr4bmif"
+path="res://.godot/imported/First Attempt at Anything v2.wav-585fe54eb360f36534d479cc7aab6e07.sample"
+
+[deps]
+
+source_file="res://assets/First Attempt at Anything v2.wav"
+dest_files=["res://.godot/imported/First Attempt at Anything v2.wav-585fe54eb360f36534d479cc7aab6e07.sample"]
+
+[params]
+
+force/8_bit=false
+force/mono=false
+force/max_rate=false
+force/max_rate_hz=44100
+edit/trim=false
+edit/normalize=false
+edit/loop_mode=0
+edit/loop_begin=0
+edit/loop_end=-1
+compress/mode=2
