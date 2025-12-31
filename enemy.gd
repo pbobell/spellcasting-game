@@ -4,6 +4,15 @@ var Blast: PackedScene = preload("res://abilities/blast.tscn")
 var Block: PackedScene = preload("res://abilities/block.tscn")
 var Heal: PackedScene = preload("res://abilities/heal.tscn")
 
+enum THINK_MODES {
+	DEFAULT,
+	AGGRESSIVE,
+	DEFENSIVE,
+	PASSIVE,
+}
+
+@export var think_mode: THINK_MODES = THINK_MODES.DEFAULT
+
 const RES_DIR = "res://abilities"
 var abilities: Dictionary
 
@@ -203,18 +212,35 @@ func think() -> void:
 	if state == STATES.ACTING or state == STATES.RECOVERING:
 		return
 	
-	var player_damage_percent = 1 - float(get_player().health)/get_player().health_max
-	var npc_damage_percent = 1 - (float(health)/health_max)
+	match think_mode:
+		THINK_MODES.DEFAULT, THINK_MODES.AGGRESSIVE:
+			var player_damage_percent = 1 - float(get_player().health)/get_player().health_max
+			var npc_damage_percent = 1 - (float(health)/health_max)
 
-	if npc_preservation * npc_damage_percent > npc_aggression * player_damage_percent:
-		if active_block[g.SIDES.LEFT] == null:
-			start_cast_reach(cast_block)
-		else:
-			start_cast_reach(cast_block_reset)
-		if npc_damage_percent > 0.25:
-			start_cast_reach(cast_heal)
-	else:
-		start_cast_reach(cast_blast)
+			if npc_preservation * npc_damage_percent > npc_aggression * player_damage_percent:
+				if active_block[g.SIDES.LEFT] == null:
+					start_cast_reach(cast_block)
+				else:
+					start_cast_reach(cast_block_reset)
+				if npc_damage_percent > 0.25:
+					start_cast_reach(cast_heal)
+			else:
+				start_cast_reach(cast_blast)
+		THINK_MODES.DEFENSIVE:
+			var player_damage_percent = 1 - float(get_player().health)/get_player().health_max
+			var npc_damage_percent = 1 - (float(health)/health_max)
+
+			if npc_preservation * npc_damage_percent > npc_aggression * player_damage_percent:
+				if active_block[g.SIDES.LEFT] == null:
+					start_cast_reach(cast_block)
+				else:
+					start_cast_reach(cast_block_reset)
+				if npc_damage_percent > 0.25:
+					start_cast_reach(cast_heal)
+		THINK_MODES.PASSIVE:
+			return
+		_:
+			push_warning("Unimplemented thinking mode ", think_mode)
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(_delta: float) -> void:
