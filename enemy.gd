@@ -32,14 +32,17 @@ var health: int = health_max :
 
 var dead: bool = false
 
-@export var pos_adjustment: Vector3 = Vector3(-1.5, 5, -4)
+## Position adjustment for spells to appear in front of body
+@export var pos_adjustment: Vector3 = Vector3(0, 5, -4)
+## Position adjustment for calculations involving the player (target)'s center.
 @export var player_center_adjustment: Vector3 = Vector3(2, 10, 0)
-@export var heal_adjustment: Vector3 = Vector3(0, 5, -2)
+## Additional position adjustment for heal spell due to model center
+@export var heal_adjustment: Vector3 = Vector3(0, 0, 2)
 
 const SPEED = 5.0
 const JUMP_VELOCITY = 4.5
 
-var active_block: Array[Node] = [null, null]
+var active_block: Node = null
 
 var npc_aggression = randi_range(5, 15)
 var npc_preservation = 20 - npc_aggression
@@ -159,7 +162,7 @@ func cast_blast() -> void:
 func cast_block() -> void:
 	state = STATES.RECOVERING
 	var casted = Block.instantiate()
-	active_block[g.SIDES.LEFT] = casted
+	active_block = casted
 	casted.cast(abilities["Block"],
 				get_parent(),
 				global_position + pos_adjustment,
@@ -168,8 +171,8 @@ func cast_block() -> void:
 
 func cast_block_reset() -> void:
 	state = STATES.RECOVERING
-	if active_block[g.SIDES.LEFT]:
-		active_block[g.SIDES.LEFT].reset()
+	if active_block:
+		active_block.reset()
 	else:
 		cast_block()
 
@@ -178,7 +181,7 @@ func cast_heal() -> void:
 	var casted = Heal.instantiate()
 	casted.cast(abilities["Heal"],
 				get_parent(),
-				global_position + heal_adjustment,
+				global_position + pos_adjustment + heal_adjustment,
 				self)
 
 var casting = null
@@ -211,14 +214,14 @@ func think() -> void:
 
 	if state == STATES.ACTING or state == STATES.RECOVERING:
 		return
-	
+
 	match think_mode:
 		THINK_MODES.DEFAULT, THINK_MODES.AGGRESSIVE:
 			var player_damage_percent = 1 - float(get_player().health)/get_player().health_max
 			var npc_damage_percent = 1 - (float(health)/health_max)
 
 			if npc_preservation * npc_damage_percent > npc_aggression * player_damage_percent:
-				if active_block[g.SIDES.LEFT] == null:
+				if active_block == null:
 					start_cast_reach(cast_block)
 				else:
 					start_cast_reach(cast_block_reset)
@@ -231,7 +234,7 @@ func think() -> void:
 			var npc_damage_percent = 1 - (float(health)/health_max)
 
 			if npc_preservation * npc_damage_percent > npc_aggression * player_damage_percent:
-				if active_block[g.SIDES.LEFT] == null:
+				if active_block == null:
 					start_cast_reach(cast_block)
 				else:
 					start_cast_reach(cast_block_reset)
