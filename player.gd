@@ -34,7 +34,7 @@ var Block: PackedScene = preload("res://abilities/block.tscn")
 var Heal: PackedScene = preload("res://abilities/heal.tscn")
 
 
-var active_block: Array[Node] = [null, null]
+var active_block: Node = null
 
 const ORIENTATIONS = {
 	# When finger direction is neutral, palm is always neutral.
@@ -321,14 +321,14 @@ func cast(side: g.SIDES) -> void:
 							g.flatten(get_parent().get_node("Enemy").global_position),
 							g.COLLISION_LAYER.ENEMY)
 			"Block":
-				if active_block[side]:
-					active_block[side].reset()
+				if active_block:
+					active_block.reset()
 				else:
 					var casted = Block.instantiate()
-					active_block[side] = casted
+					active_block = casted
 					casted.cast(ability,
 								get_parent(),
-								sidenode(side).get_node("Hand").global_position + sidesign(side) * Vector3(2, 0, 4),
+								global_position + Vector3(0, 0, 4),
 								g.COLLISION_LAYER.PLAYER)
 			"Heal":
 				var casted = Heal.instantiate()
