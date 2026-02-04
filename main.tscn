@@ -97,7 +97,6 @@ think_mode = 3
 
 [node name="BackgroundMusic" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("4_lquwl")
-autoplay = true
 
 [node name="GameOver" type="Label" parent="."]
 visible = false
