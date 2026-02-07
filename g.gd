@@ -21,6 +21,21 @@ enum CAMERA_EFFECTS {
 	FLASH = 1,
 }
 
+# Warning to future us: Yes, it looks like these belong in a namespace
+# Like an enum, inner class, or even Resource. Do not attempt. Nothing we tried
+# was any better than this. See the commit message where they were added for
+# more.
+const ABILITY_ABSORB = "Absorb"
+const ABILITY_BLAST = "Blast"
+const ABILITY_BLOCK = "Block"
+const ABILITY_CHARGE = "Charge"
+const ABILITY_FOCUS = "Focus"
+const ABILITY_HEAL = "Heal"
+const ABILITY_PULL = "Pull"
+const ABILITY_PUSH = "Push"
+const ABILITY_REFLECT = "Reflect"
+const ABILITY_RESTORE = "Restore"
+
 #endregion
 
 #region Shared State
