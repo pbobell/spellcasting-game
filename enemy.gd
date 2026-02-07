@@ -35,7 +35,7 @@ var health: int = health_max :
 var dead: bool = false
 
 ## Position adjustment for spells to appear in front of body
-@export var pos_adjustment: Vector3 = Vector3(0, 5, -4)
+@export var pos_adjustment: Vector3 = Vector3(0, 1, -4)
 ## Position adjustment for calculations involving the player (target)'s center.
 @export var player_center_adjustment: Vector3 = Vector3(2, 10, 0)
 ## Additional position adjustment for heal spell due to model center

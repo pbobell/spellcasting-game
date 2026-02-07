@@ -13,7 +13,7 @@ func _ready() -> void:
 func cast(p_ability: Ability, hand_pos: Vector3, hand_adj: int, caster: Node3D, target: Node3D) -> void:
 	ability = p_ability
 	caster.get_parent().add_child(self)
-	global_position = caster.global_position + Vector3(0, 0, 4)
+	global_position = caster.global_position + caster.global_transform.basis.z * 5
 	collision_layer |= caster.getOriginCollisionLayer()
 	caster.activateBlock(self)
 
