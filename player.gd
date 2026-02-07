@@ -23,11 +23,22 @@ var fingers: Array[g.DIRS] = [g.DIRS.NONE, g.DIRS.NONE]
 var palm: Array[g.DIRS] = [g.DIRS.NONE, g.DIRS.NONE]
 
 @export var health_max: int = 10
+@export var mana_max: int = 10
+
 @onready var health: int = health_max : 
 	set(value):
 		health = value
 		$Left/Hand.health = health
 		$Right/Hand.health = health
+		
+@onready var mana: int = mana_max :
+	set(value):
+		mana = value
+		if get_node_or_null("ManaBar"):
+			$ManaBar.value = value
+
+var logHealth: int
+var logMana: int
 		
 var abilityDictionary: Dictionary[String, PackedScene] = {
 	g.ABILITY_BLAST: preload("res://abilities/blast.tscn"),
@@ -90,6 +101,8 @@ func _debug_move_right() -> void:
 
 
 func _ready() -> void:
+	health = health_max
+	mana = mana_max
 	resting_rotation[g.SIDES.LEFT] = $Left.rotation
 	resting_rotation[g.SIDES.RIGHT] = $Right.rotation
 
@@ -278,6 +291,8 @@ func _adjust_hands(delta: float) -> void:
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
+	helperLogs()
+	
 	if Engine.is_editor_hint():
 		return
 	
@@ -312,13 +327,14 @@ func cast(side: g.SIDES) -> void:
 #	var hand = sidenode(side).get_node("Hand/hand/12683_hand_v1_FINAL")
 	if $AbilityHandler.current_ready[side]:
 		var ability = $AbilityHandler.current[side]
-		var casted = abilityDictionary[ability.name].instantiate()
-		casted.cast(ability,
-			sidenode(side).get_node("Hand").global_position,
-			sidesign(side),
-			self,
-			get_parent().get_node("Enemy"))
-		$AbilityHandler.cast(side)
+		if consume_mana(ability.mana_cost):
+			var casted = abilityDictionary[ability.name].instantiate()
+			casted.cast(ability,
+				sidenode(side).get_node("Hand").global_position,
+				sidesign(side),
+				self,
+				get_parent().get_node("Enemy"))
+			$AbilityHandler.cast(side)
 
 func kill() -> void:
 	game_over.emit()
@@ -331,6 +347,16 @@ func damage(amount: int) -> void:
 
 func heal(amount: int) -> void:
 	health = min(health + amount, health_max)
+	
+func consume_mana(cost: int) -> bool:
+	if mana < cost:
+		return false
+	else:
+		mana -= cost
+		return true
+		
+func restore_mana(amount: int) -> void:
+	mana = min(mana + amount, mana_max)
 
 func hit_with_blast(blast: Node3D) -> void:
 	print("Ow")
@@ -353,3 +379,12 @@ func getOriginCollisionLayer() -> int:
 	
 func getTargetCollisionLayer() -> int:
 	return g.COLLISION_LAYER.ENEMY
+
+func helperLogs() -> void:
+	if(logMana != mana):
+		logMana = mana
+		print("Current Mana: ", logMana)
+		
+	if(logHealth != health):
+		logHealth = health
+		print("Current Health: ", logHealth)
