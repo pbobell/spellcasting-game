@@ -17,6 +17,7 @@ func cast(p_ability: Ability, hand_pos: Vector3, hand_adj: int, caster: Node3D, 
 	collision_mask |= caster.getTargetCollisionLayer()
 	assert(target)
 	linear_velocity = speed * global_position.direction_to(target.global_position)
+	
 func _process(_delta: float) -> void:
 	if global_position.y < 0:
 		queue_free()
