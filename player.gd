@@ -30,9 +30,9 @@ var palm: Array[g.DIRS] = [g.DIRS.NONE, g.DIRS.NONE]
 		$Right/Hand.health = health
 		
 var abilityDictionary: Dictionary[String, PackedScene] = {
-	"Blast": preload("res://abilities/blast.tscn"),
-	"Block": preload("res://abilities/block.tscn"),
-	"Heal": preload("res://abilities/heal.tscn")
+	g.ABILITY_BLAST: preload("res://abilities/blast.tscn"),
+	g.ABILITY_BLOCK: preload("res://abilities/block.tscn"),
+	g.ABILITY_HEAL: preload("res://abilities/heal.tscn")
 }
 
 var active_block: Node = null

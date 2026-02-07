@@ -1,9 +1,9 @@
 extends CharacterBody3D
 
 var abilityDictionary: Dictionary[String, PackedScene] = {
-	"Blast": preload("res://abilities/blast.tscn"),
-	"Block": preload("res://abilities/block.tscn"),
-	"Heal": preload("res://abilities/heal.tscn")
+	g.ABILITY_BLAST: preload("res://abilities/blast.tscn"),
+	g.ABILITY_BLOCK: preload("res://abilities/block.tscn"),
+	g.ABILITY_HEAL: preload("res://abilities/heal.tscn")
 }
 
 enum THINK_MODES {
@@ -163,7 +163,7 @@ func cast_ability(ability: String) -> void:
 var casting = null
 
 func _on_shoot_timer_timeout() -> void:
-	start_cast_reach("Blast")
+	start_cast_reach(g.ABILITY_BLAST)
 
 func start_cast_reach(ability: String) -> void:
 	state = STATES.ACTING
@@ -212,20 +212,20 @@ func think() -> void:
 
 			if npc_preservation * npc_damage_percent > npc_aggression * player_damage_percent:
 				if npc_damage_percent > 0.25:
-					start_cast_reach("Heal")
+					start_cast_reach(g.ABILITY_HEAL)
 				else:
-					start_cast_reach("Block")
+					start_cast_reach(g.ABILITY_BLOCK)
 			else:
-				start_cast_reach("Blast")
+				start_cast_reach(g.ABILITY_BLAST)
 		THINK_MODES.DEFENSIVE:
 			var player_damage_percent = 1 - float(get_player().health)/get_player().health_max
 			var npc_damage_percent = 1 - (float(health)/health_max)
 
 			if npc_preservation * npc_damage_percent > npc_aggression * player_damage_percent:
 				if npc_damage_percent > 0.25:
-					start_cast_reach("Heal")
+					start_cast_reach(g.ABILITY_HEAL)
 				else:
-					start_cast_reach("Block")
+					start_cast_reach(g.ABILITY_BLOCK)
 		THINK_MODES.PASSIVE:
 			return
 		_:
