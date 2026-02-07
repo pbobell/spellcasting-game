@@ -5,19 +5,18 @@ var ability: Ability
 
 @export var power = 6
 
-var target: Node = null
+var heal_target: Node = null
 
 func _ready() -> void:
 	pass
-
-func cast(p_ability: Ability, parent: Node3D, origin: Vector3, p_target: Node) -> void:
+	
+func cast(p_ability: Ability, hand_pos: Vector3, hand_adj: int, caster: Node3D, target: Node3D) -> void:
 	ability = p_ability
-	parent.add_child(self)
-	global_position = origin
-	target = p_target
-
+	caster.get_parent().add_child(self)
+	global_position = hand_pos + Vector3(0, 3, -2)
+	heal_target = caster
 
 func _on_timer_timeout() -> void:
-	if target:
-		target.heal(power)
+	if heal_target:
+		heal_target.heal(power)
 	queue_free()

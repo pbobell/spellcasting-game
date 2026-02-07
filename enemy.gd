@@ -1,8 +1,10 @@
 extends CharacterBody3D
 
-var Blast: PackedScene = preload("res://abilities/blast.tscn")
-var Block: PackedScene = preload("res://abilities/block.tscn")
-var Heal: PackedScene = preload("res://abilities/heal.tscn")
+var abilityDictionary: Dictionary[String, PackedScene] = {
+	"Blast": preload("res://abilities/blast.tscn"),
+	"Block": preload("res://abilities/block.tscn"),
+	"Heal": preload("res://abilities/heal.tscn")
+}
 
 enum THINK_MODES {
 	DEFAULT,
@@ -149,56 +151,44 @@ func hit_with_blast(blast: Node3D) -> void:
 	play_queue(ANIMATIONS["hit"])
 	damage(blast.power)
 
-func cast_blast() -> void:
+func cast_ability(ability: String) -> void:
 	state = STATES.RECOVERING
-	var casted = Blast.instantiate()
-	casted.cast(abilities["Blast"],
-				get_parent(),
-				global_position + pos_adjustment,
-				g.COLLISION_LAYER.ENEMY,
-				get_player().global_position - player_center_adjustment,
-				g.COLLISION_LAYER.PLAYER)
-
-func cast_block() -> void:
-	state = STATES.RECOVERING
-	var casted = Block.instantiate()
-	active_block = casted
-	casted.cast(abilities["Block"],
-				get_parent(),
-				global_position + pos_adjustment,
-				g.COLLISION_LAYER.ENEMY,
-				PI)
-
-func cast_block_reset() -> void:
-	state = STATES.RECOVERING
-	if active_block:
-		active_block.reset()
-	else:
-		cast_block()
-
-func cast_heal() -> void:
-	state = STATES.RECOVERING
-	var casted = Heal.instantiate()
-	casted.cast(abilities["Heal"],
-				get_parent(),
-				global_position + pos_adjustment + heal_adjustment,
-				self)
+	var casted = abilityDictionary[ability].instantiate()
+	casted.cast(abilities[ability],
+		global_position + pos_adjustment,
+		0,
+		self,
+		get_player())
 
 var casting = null
 
 func _on_shoot_timer_timeout() -> void:
-	start_cast_reach(cast_blast)
+	start_cast_reach("Blast")
 
-func start_cast_reach(cast_fn: Callable) -> void:
+func start_cast_reach(ability: String) -> void:
 	state = STATES.ACTING
 	play_queue(ANIMATIONS["cast_shoot_full"])
-	casting = cast_fn
+	casting = ability
 	$CastDelay.start(0.53)
 
 func _on_cast_delay_timeout() -> void:
 	if casting:
-		casting.call()
+		cast_ability(casting)
 		casting = null
+		
+func activateBlock(block: Node) -> void:
+	if active_block:
+		active_block.reset()
+		block.queue_free()
+	else:
+		block.rotation.y = PI
+		active_block = block
+
+func getOriginCollisionLayer() -> int:
+	return g.COLLISION_LAYER.ENEMY
+	
+func getTargetCollisionLayer() -> int:
+	return g.COLLISION_LAYER.PLAYER
 
 enum STATES {
 	IDLE,
@@ -221,25 +211,21 @@ func think() -> void:
 			var npc_damage_percent = 1 - (float(health)/health_max)
 
 			if npc_preservation * npc_damage_percent > npc_aggression * player_damage_percent:
-				if active_block == null:
-					start_cast_reach(cast_block)
-				else:
-					start_cast_reach(cast_block_reset)
 				if npc_damage_percent > 0.25:
-					start_cast_reach(cast_heal)
+					start_cast_reach("Heal")
+				else:
+					start_cast_reach("Block")
 			else:
-				start_cast_reach(cast_blast)
+				start_cast_reach("Blast")
 		THINK_MODES.DEFENSIVE:
 			var player_damage_percent = 1 - float(get_player().health)/get_player().health_max
 			var npc_damage_percent = 1 - (float(health)/health_max)
 
 			if npc_preservation * npc_damage_percent > npc_aggression * player_damage_percent:
-				if active_block == null:
-					start_cast_reach(cast_block)
-				else:
-					start_cast_reach(cast_block_reset)
 				if npc_damage_percent > 0.25:
-					start_cast_reach(cast_heal)
+					start_cast_reach("Heal")
+				else:
+					start_cast_reach("Block")
 		THINK_MODES.PASSIVE:
 			return
 		_:

@@ -9,14 +9,14 @@ var ability: Ability
 func _ready() -> void:
 	pass
 
-func cast(p_ability: Ability, parent: Node3D, origin: Vector3, origin_layer: int = 0, target = null, target_layer: int = 0) -> void:
+func cast(p_ability: Ability, hand_pos: Vector3, hand_adj: int, caster: Node3D, target: Node3D) -> void:
 	ability = p_ability
-	parent.add_child(self)
-	global_position = origin
-	collision_layer |= origin_layer
-	collision_mask |= target_layer
+	caster.get_parent().add_child(self)
+	global_position = hand_pos + hand_adj * Vector3(1, 0, 0)
+	collision_layer |= caster.getOriginCollisionLayer()
+	collision_mask |= caster.getTargetCollisionLayer()
 	assert(target)
-	linear_velocity = Vector3(0, 10, 0) + speed * g.flatten(global_position).direction_to(target)
+	linear_velocity = Vector3(0, 10, 0) + speed * g.flatten(global_position).direction_to(g.flatten(target.global_position))
 
 func _process(_delta: float) -> void:
 	if global_position.y < 0:

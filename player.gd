@@ -28,11 +28,12 @@ var palm: Array[g.DIRS] = [g.DIRS.NONE, g.DIRS.NONE]
 		health = value
 		$Left/Hand.health = health
 		$Right/Hand.health = health
-
-var Blast: PackedScene = preload("res://abilities/blast.tscn")
-var Block: PackedScene = preload("res://abilities/block.tscn")
-var Heal: PackedScene = preload("res://abilities/heal.tscn")
-
+		
+var abilityDictionary: Dictionary[String, PackedScene] = {
+	"Blast": preload("res://abilities/blast.tscn"),
+	"Block": preload("res://abilities/block.tscn"),
+	"Heal": preload("res://abilities/heal.tscn")
+}
 
 var active_block: Node = null
 
@@ -311,31 +312,12 @@ func cast(side: g.SIDES) -> void:
 #	var hand = sidenode(side).get_node("Hand/hand/12683_hand_v1_FINAL")
 	if $AbilityHandler.current_ready[side]:
 		var ability = $AbilityHandler.current[side]
-		match ability.name:
-			"Blast":
-				var casted = Blast.instantiate()
-				casted.cast(ability,
-							get_parent(),
-							sidenode(side).get_node("Hand").global_position + sidesign(side) * Vector3(1, 0, 0),
-							g.COLLISION_LAYER.PLAYER,
-							g.flatten(get_parent().get_node("Enemy").global_position),
-							g.COLLISION_LAYER.ENEMY)
-			"Block":
-				if active_block:
-					active_block.reset()
-				else:
-					var casted = Block.instantiate()
-					active_block = casted
-					casted.cast(ability,
-								get_parent(),
-								global_position + Vector3(0, 0, 4),
-								g.COLLISION_LAYER.PLAYER)
-			"Heal":
-				var casted = Heal.instantiate()
-				casted.cast(ability,
-							get_parent(),
-							sidenode(side).get_node("Hand").global_position + Vector3(0, 5, -2),
-							self)
+		var casted = abilityDictionary[ability.name].instantiate()
+		casted.cast(ability,
+			sidenode(side).get_node("Hand").global_position,
+			sidesign(side),
+			self,
+			get_parent().get_node("Enemy"))
 		$AbilityHandler.cast(side)
 
 func kill() -> void:
@@ -354,7 +336,20 @@ func hit_with_blast(blast: Node3D) -> void:
 	print("Ow")
 	damage(blast.power)
 
-
 func _on_hitbox_body_entered(body: Node3D) -> void:
 	if body.is_in_group("blasts"):
 		hit_with_blast(body)
+		
+func activateBlock(block: Node) -> void:
+	if active_block:
+		active_block.reset()
+		block.queue_free()
+	else:
+		block.rotation.y = 0
+		active_block = block
+
+func getOriginCollisionLayer() -> int:
+	return g.COLLISION_LAYER.PLAYER
+	
+func getTargetCollisionLayer() -> int:
+	return g.COLLISION_LAYER.ENEMY

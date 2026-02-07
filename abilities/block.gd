@@ -10,12 +10,12 @@ func _ready() -> void:
 	g.make_surface_material_unique(%Shield_Celtic_Golden)
 
 ## "Casts" the ability into the game world.
-func cast(p_ability: Ability, parent: Node3D, origin: Vector3, owner_layer: int, facing: float = 0) -> void:
+func cast(p_ability: Ability, hand_pos: Vector3, hand_adj: int, caster: Node3D, target: Node3D) -> void:
 	ability = p_ability
-	parent.add_child(self)
-	global_position = origin
-	collision_layer  |= owner_layer
-	rotation.y = facing
+	caster.get_parent().add_child(self)
+	global_position = caster.global_position + Vector3(0, 0, 4)
+	collision_layer |= caster.getOriginCollisionLayer()
+	caster.activateBlock(self)
 
 func _process(_delta: float) -> void:
 #	power -= delta * 30
@@ -28,7 +28,6 @@ func damage(amount: int) -> void:
 
 func hit_with_blast(blast: Node3D) -> void:
 	damage(blast.power)
-
 
 func reset():
 	power = max_power
