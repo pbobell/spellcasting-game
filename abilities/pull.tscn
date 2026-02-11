@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://cniuig44q7i4b"]
+
+[ext_resource type="Script" uid="uid://cr0he46xf8xm8" path="res://abilities/pull.gd" id="1_kpx1l"]
+
+[node name="Pull" type="Node3D"]
+script = ExtResource("1_kpx1l")

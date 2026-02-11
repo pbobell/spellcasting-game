@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://xbcdaj77ng1j"]
+
+[ext_resource type="Script" uid="uid://cviatimi46cfc" path="res://abilities/restore.gd" id="1_jp4iu"]
+
+[node name="Restore" type="Node3D"]
+script = ExtResource("1_jp4iu")

@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://dv324wnmadi8t"]
+
+[ext_resource type="Script" uid="uid://cjvasx4yklk0w" path="res://abilities/reflect.gd" id="1_4dm80"]
+
+[node name="Reflect" type="Node3D"]
+script = ExtResource("1_4dm80")

@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://d21eu0jwasmc5"]
+
+[ext_resource type="Script" uid="uid://dvgn46lqh1051" path="res://abilities/charge.gd" id="1_f3dkj"]
+
+[node name="Charge" type="Node3D"]
+script = ExtResource("1_f3dkj")

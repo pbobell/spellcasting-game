@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://d0bf6qcjg1an4"]
+
+[ext_resource type="Script" uid="uid://cedo7s8jc2kxh" path="res://abilities/focus.gd" id="1_b6xij"]
+
+[node name="Focus" type="Node3D"]
+script = ExtResource("1_b6xij")

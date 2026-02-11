@@ -41,9 +41,16 @@ var logHealth: int
 var logMana: int
 		
 var abilityDictionary: Dictionary[String, PackedScene] = {
+	g.ABILITY_ABSORB: preload("res://abilities/absorb.tscn"),
 	g.ABILITY_BLAST: preload("res://abilities/blast.tscn"),
 	g.ABILITY_BLOCK: preload("res://abilities/block.tscn"),
-	g.ABILITY_HEAL: preload("res://abilities/heal.tscn")
+	g.ABILITY_CHARGE: preload("res://abilities/charge.tscn"),
+	g.ABILITY_FOCUS: preload("res://abilities/focus.tscn"),
+	g.ABILITY_HEAL: preload("res://abilities/heal.tscn"),
+	g.ABILITY_PULL: preload("res://abilities/pull.tscn"),
+	g.ABILITY_PUSH: preload("res://abilities/push.tscn"),
+	g.ABILITY_REFLECT: preload("res://abilities/reflect.tscn"),
+	g.ABILITY_RESTORE: preload("res://abilities/restore.tscn")
 }
 
 var active_block: Node = null
@@ -350,7 +357,7 @@ func heal(amount: int) -> void:
 	
 func consume_mana(cost: int) -> bool:
 	if mana < cost:
-		return false
+		return true
 	else:
 		mana -= cost
 		return true
