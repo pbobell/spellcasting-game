@@ -1,5 +1,6 @@
 extends CharacterBody3D
 
+
 var abilityDictionary: Dictionary[String, PackedScene] = {
 	g.ABILITY_ABSORB: preload("res://abilities/absorb.tscn"),
 	g.ABILITY_BLAST: preload("res://abilities/blast.tscn"),
@@ -11,6 +12,19 @@ var abilityDictionary: Dictionary[String, PackedScene] = {
 	g.ABILITY_PUSH: preload("res://abilities/push.tscn"),
 	g.ABILITY_REFLECT: preload("res://abilities/reflect.tscn"),
 	g.ABILITY_RESTORE: preload("res://abilities/restore.tscn")
+}
+
+var priority: Dictionary[String, float] = {
+	g.ABILITY_ABSORB: 0,
+	g.ABILITY_BLAST: 0,
+	g.ABILITY_BLOCK: 0,
+	g.ABILITY_CHARGE: 0,
+	g.ABILITY_FOCUS: 0,
+	g.ABILITY_HEAL: 0,
+	g.ABILITY_PULL: 0,
+	g.ABILITY_PUSH: 0,
+	g.ABILITY_REFLECT: 0,
+	g.ABILITY_RESTORE: 0
 }
 
 enum THINK_MODES {
@@ -33,11 +47,19 @@ func game_over():
 	$orc/AnimationPlayer.stop()
 
 @export var health_max: int = 10
+@export var mana_max: int = 10
+
 var health: int = health_max :
 	set(value):
 		health = value
 		if get_node_or_null("HealthBar"):
 			$HealthBar.mesh.material.set_shader_parameter("health", float(health) / health_max)
+
+var mana: int = mana_max :
+	set(value):
+		mana = value
+		if get_node_or_null("ManaBar"):
+			$ManaBar.value = value
 
 var dead: bool = false
 
@@ -86,7 +108,9 @@ func _ready() -> void:
 	_load_abilities()
 
 func _load_abilities() -> void:
-	for f in ["Blast.tres", "Block.tres", "Heal.tres"]:
+	for f in DirAccess.get_files_at("res://abilities"):
+		if not f.ends_with("tres"):
+			continue
 		f = RES_DIR.path_join(f)
 		var data = ResourceLoader.load(f)
 		var ability = Ability.from_data(data)
@@ -238,8 +262,64 @@ func think() -> void:
 		_:
 			push_warning("Unimplemented thinking mode ", think_mode)
 
+func check_for_player_blasts() -> Node3D:
+	for node in get_tree().get_nodes_in_group("blasts"):
+		if node.caster == get_player():
+			return node
+	return null
+
+func new_think() -> void:
+	if dead:
+		return
+
+	if state == STATES.ACTING or state == STATES.RECOVERING:
+		return
+	
+	# Setup variables
+	var player_damage_percent = 1 - float(get_player().health)/get_player().health_max
+	var distance_to_player = abs(global_position.z - get_player().global_position.z)
+	var is_player_blast_flying = null
+	if check_for_player_blasts():
+		is_player_blast_flying = 1
+	var npc_damage_percent = 1 - (float(health)/health_max)
+	var npc_mana_percent = 1 - (float(mana)/mana_max)
+	var npc_block_damage_percent = 0
+	if active_block:
+		npc_block_damage_percent = 1 - (float(active_block.power/active_block.max_power))
+	var yearn = npc_preservation * npc_damage_percent - npc_aggression * player_damage_percent
+	#var other_hand_ability = 'Figure this out'
+	
+	#Priority updates
+	priority[g.ABILITY_ABSORB]  += roundi(yearn * npc_mana_percent)
+	if active_block:
+		priority[g.ABILITY_BLAST] += yearn * active_block.power
+	priority[g.ABILITY_BLOCK] += roundi(yearn * npc_block_damage_percent)
+	#if other_hand_ability.name == g.ABILITY_BLAST or other_hand_ability.name == g.ABILITY_HEAL:
+		#priority[g.ABILITY_CHARGE] += 20
+	#if other_hand_ability.cast_time > '3s':
+		#priority[g.ABILITY_FOCUS] += 20
+	#else:
+		#priority[g.ABILITY_FOCUS] -= 20
+	priority[g.ABILITY_HEAL] += roundi(yearn * npc_damage_percent)
+	priority[g.ABILITY_PULL] -= roundi(yearn * distance_to_player)
+	priority[g.ABILITY_PUSH] += yearn * distance_to_player
+	if is_player_blast_flying:
+		priority[g.ABILITY_REFLECT] += 20
+	else:
+		priority[g.ABILITY_REFLECT] = 0
+	priority[g.ABILITY_RESTORE] += roundi(1 / npc_mana_percent)
+	
+	var max_priority = priority.values().max()
+	var next_ability = g.ABILITY_BLAST
+	for ability in priority:
+		if priority[ability] == max_priority:
+			next_ability = ability
+	priority[next_ability] = 0
+	
+	start_cast_reach(next_ability)
+	
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(_delta: float) -> void:
 	if stopped:
 		return
-	think()
+	new_think()

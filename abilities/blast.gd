@@ -6,10 +6,13 @@ var ability: Ability
 @export var speed = 40
 @export var power = 3
 
+var caster = null
+
 func _ready() -> void:
 	pass
 
-func cast(p_ability: Ability, hand_pos: Vector3, hand_adj: int, caster: Node3D, target: Node3D) -> void:
+func cast(p_ability: Ability, hand_pos: Vector3, hand_adj: int, the_caster: Node3D, target: Node3D) -> void:
+	caster = the_caster
 	ability = p_ability
 	caster.get_parent().add_child(self)
 	global_position = hand_pos + hand_adj * Vector3(1, 0, 0)
