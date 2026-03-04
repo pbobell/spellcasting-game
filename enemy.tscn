@@ -434,9 +434,6 @@ size = Vector2(5, 1)
 transform = Transform3D(10, 0, 0, 0, 10, 0, 0, 0, 10, 0, 0, 0)
 collision_layer = 4
 collision_mask = 2
-axis_lock_linear_x = true
-axis_lock_linear_y = true
-axis_lock_linear_z = true
 script = ExtResource("1_4gyqm")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]

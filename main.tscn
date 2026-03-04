@@ -93,6 +93,9 @@ shape = SubResource("ConcavePolygonShape3D_pp5ox")
 
 [node name="Enemy" parent="." instance=ExtResource("4_1bvp3")]
 transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, 0, 6, 28.283)
+axis_lock_linear_x = false
+axis_lock_linear_y = false
+axis_lock_linear_z = false
 think_mode = 3
 
 [node name="BackgroundMusic" type="AudioStreamPlayer" parent="."]

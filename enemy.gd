@@ -49,7 +49,7 @@ var dead: bool = false
 @export var heal_adjustment: Vector3 = Vector3(0, 0, 2)
 
 const SPEED = 5.0
-const JUMP_VELOCITY = 4.5
+const JUMP_VELOCITY = 10
 
 var active_block: Node = null
 
@@ -113,6 +113,7 @@ func play_queue(new_queue = null) -> void:
 func _input(event: InputEvent) -> void:
 	if event.is_action_pressed("dpad_up"):
 		play_queue(ANIMATIONS["jump"])
+		jump()
 	if event.is_action_pressed("dpad_right"):
 		play_queue(ANIMATIONS["punch"])
 	if event.is_action_pressed("dpad_down"):
@@ -121,16 +122,19 @@ func _input(event: InputEvent) -> void:
 		play_queue([])
 
 func jump():
+	#push_warning("Velocity: ", velocity, " On Floor? ", is_on_floor())
 	if is_on_floor():
 		velocity.y = JUMP_VELOCITY
 
 func _physics_process(delta: float) -> void:
-	# Add the gravity.
+	if velocity != Vector3.ZERO:
+		#push_warning("Velocity: ", velocity, " On Floor? ", is_on_floor())
+		#push_warning("Collided? ", move_and_slide())
+		move_and_slide()
 	if not is_on_floor():
 		velocity += get_gravity() * delta
-
-	move_and_slide()
-
+	else:
+		velocity = Vector3.ZERO
 
 func _on_animation_player_animation_finished(_anim_name: StringName) -> void:
 	if state == STATES.RECOVERING and len(animation_queue) == 0:
